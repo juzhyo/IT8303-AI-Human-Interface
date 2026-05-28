@@ -1,22 +1,21 @@
 name: Train FashionMNIST CNN
 
-# This triggers the action every time you push code to the main branch
 on:
   push:
     branches: [ "main" ]
 
 jobs:
   train-model:
-    runs-on: ubuntu-latest # Uses a standard Linux server
+    runs-on: ubuntu-latest 
 
     steps:
-    # 1. Grab your code from the repository
+    # 1. Grab your code (Updated to v4)
     - name: Checkout Repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
-    # 2. Install Python
+    # 2. Install Python (Updated to v5)
     - name: Set up Python 3.10
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
         python-version: '3.10'
 
@@ -26,19 +25,19 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
-    # 4. Make the image directory just in case it doesn't exist
+    # 4. Make the image directory
     - name: Create img directory
       run: mkdir -p ./ca1/img
 
-    # 5. Run the script and save the printed terminal output to a text file
+    # 5. Run the script and save the printed terminal output
     - name: Run Training Script
-      run: python ./ca1/ca1.py > output.txt
+      run: python ./ca1/ca1.py > output_log.txt
 
-    # 6. Upload the text file and the generated images so you can download them
+    # 6. Upload the text file and images (UPDATED TO v4 TO FIX YOUR ERROR)
     - name: Upload Output Artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: training-results
         path: |
-          output.txt
+          output_log.txt
           ./ca1/img/*.png
