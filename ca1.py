@@ -40,7 +40,7 @@ test_size = len(test_data)
 print(f'Total images: {train_size+val_size+test_size}')
 print(f'Training images: {train_size}')
 print(f'Validation images: {val_size}')
-print(f'Test images: {test_size}')
+print(f'Test images: {test_size}\n')
 
 # Sample 20 training images
 sample_indices = range(20)
@@ -60,6 +60,11 @@ def get_accuracy(outputs, labels):
     _, predictions = torch.max(outputs, 1)
     correct = (predictions == labels).sum().item()
     return correct / len(labels)
+
+######################
+# Baseline CNN model #
+######################
+print("***IMPLEMENT BASELINE CNN MODEL***\n")
 
 # Define a simple CNN model
 cnn_model = nn.Sequential(
@@ -137,7 +142,7 @@ with torch.no_grad():
         test_output = cnn_model(test_images)
         test_loss += criterion(test_output, test_labels).item()
         test_acc += get_accuracy(test_output, test_labels)
-print(f"Test Loss: {test_loss / len(test_loader):.4f}, Test Acc: {test_acc / len(test_loader):.4f}")
+print(f"\nTest Loss: {test_loss / len(test_loader):.4f}, Test Acc: {test_acc / len(test_loader):.4f}")
 
 # Plot training and validation loss/accuracy curves
 plt.figure(figsize=(6, 8))
@@ -162,7 +167,11 @@ plt.tight_layout()
 
 plt.savefig("./ca1/img/baseline_perfomance.png",bbox_inches='tight',dpi=300)
 
-# Data Augmentation
+#####################
+# Data Augmentation #
+#####################
+print("***IMPLEMENT DATA AUGMENTATION***\n")
+
 train_transform = transforms.Compose([
     transforms.RandomHorizontalFlip(p=0.5),      # 50% chance to flip horizontally
     transforms.RandomRotation(degrees=10),       # Rotate by up to +/- 10 degrees
@@ -276,7 +285,7 @@ with torch.no_grad():
         test_output = cnn_model(test_images)
         test_loss += criterion(test_output, test_labels).item()
         test_acc += get_accuracy(test_output, test_labels)
-print(f"Test Loss: {test_loss / len(test_loader):.4f}, Test Acc: {test_acc / len(test_loader):.4f}")
+print(f"\nTest Loss: {test_loss / len(test_loader):.4f}, Test Acc: {test_acc / len(test_loader):.4f}")
 
 # Plot training and validation loss/accuracy curves
 plt.figure(figsize=(6, 8))
@@ -299,7 +308,11 @@ plt.title('CNN Training and Validation Accuracy')
 plt.tight_layout()
 plt.savefig("./ca1/img/augment_perfomance.png",bbox_inches='tight',dpi=300)
 
-# Model improvement
+#####################
+# Model improvement #
+#####################
+print("***IMPLEMENT MODEL IMPROVEMENTS***\n")
+
 train_transform = transforms.Compose([
     transforms.RandomHorizontalFlip(p=0.5),      # 50% chance to flip horizontally
     transforms.RandomRotation(degrees=10),       # Rotate by up to +/- 10 degrees
@@ -370,7 +383,7 @@ cnn_train_acc_history = []
 cnn_val_acc_history = []
 
 # Train the model for a few epochs
-epochs = 10
+epochs = 20
 for epoch in range(epochs):
     cnn_model.train()  # IMPORTANT: Set model to training mode at the start of each epoch
     train_loss = 0
@@ -419,7 +432,7 @@ with torch.no_grad():
         test_output = cnn_model(test_images)
         test_loss += criterion(test_output, test_labels).item()
         test_acc += get_accuracy(test_output, test_labels)
-print(f"Test Loss: {test_loss / len(test_loader):.4f}, Test Acc: {test_acc / len(test_loader):.4f}")
+print(f"\nTest Loss: {test_loss / len(test_loader):.4f}, Test Acc: {test_acc / len(test_loader):.4f}")
 
 # Plot training and validation loss/accuracy curves
 plt.figure(figsize=(6, 8))
