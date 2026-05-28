@@ -1,0 +1,40 @@
+Calculated Mean: 0.2860
+Calculated Std Dev: 0.3530
+
+Total images: 70000
+Training images: 48000
+Validation images: 12000
+Test images: 10000
+Epoch 1 done in 19.23 seconds. Train Loss: 0.4335, Train Acc: 0.8455, Val Loss: 0.3283, Val Acc: 0.8801
+Epoch 2 done in 19.69 seconds. Train Loss: 0.3038, Train Acc: 0.8879, Val Loss: 0.3123, Val Acc: 0.8871
+Epoch 3 done in 19.80 seconds. Train Loss: 0.2589, Train Acc: 0.9039, Val Loss: 0.2671, Val Acc: 0.9032
+Epoch 4 done in 18.32 seconds. Train Loss: 0.2311, Train Acc: 0.9142, Val Loss: 0.2659, Val Acc: 0.9027
+Epoch 5 done in 19.64 seconds. Train Loss: 0.2049, Train Acc: 0.9242, Val Loss: 0.2601, Val Acc: 0.9041
+Epoch 6 done in 19.91 seconds. Train Loss: 0.1882, Train Acc: 0.9280, Val Loss: 0.2605, Val Acc: 0.9074
+Epoch 7 done in 19.77 seconds. Train Loss: 0.1683, Train Acc: 0.9368, Val Loss: 0.2608, Val Acc: 0.9082
+Epoch 8 done in 19.72 seconds. Train Loss: 0.1500, Train Acc: 0.9431, Val Loss: 0.2554, Val Acc: 0.9138
+Epoch 9 done in 19.74 seconds. Train Loss: 0.1376, Train Acc: 0.9484, Val Loss: 0.2654, Val Acc: 0.9119
+Epoch 10 done in 19.78 seconds. Train Loss: 0.1261, Train Acc: 0.9522, Val Loss: 0.2681, Val Acc: 0.9118
+Test Loss: 0.2783, Test Acc: 0.9132
+Epoch 1 done in 23.01 seconds. Train Loss: 0.5044, Train Acc: 0.8167, Val Loss: 0.3565, Val Acc: 0.8692
+Epoch 2 done in 23.00 seconds. Train Loss: 0.3685, Train Acc: 0.8658, Val Loss: 0.3496, Val Acc: 0.8738
+Epoch 3 done in 22.98 seconds. Train Loss: 0.3336, Train Acc: 0.8783, Val Loss: 0.3177, Val Acc: 0.8887
+Epoch 4 done in 22.88 seconds. Train Loss: 0.3090, Train Acc: 0.8868, Val Loss: 0.2976, Val Acc: 0.8925
+Epoch 5 done in 22.83 seconds. Train Loss: 0.2959, Train Acc: 0.8915, Val Loss: 0.2797, Val Acc: 0.9002
+Epoch 6 done in 22.81 seconds. Train Loss: 0.2770, Train Acc: 0.8982, Val Loss: 0.2800, Val Acc: 0.9035
+Epoch 7 done in 22.71 seconds. Train Loss: 0.2679, Train Acc: 0.8999, Val Loss: 0.2752, Val Acc: 0.9031
+Epoch 8 done in 22.66 seconds. Train Loss: 0.2563, Train Acc: 0.9044, Val Loss: 0.2589, Val Acc: 0.9078
+Epoch 9 done in 22.73 seconds. Train Loss: 0.2500, Train Acc: 0.9054, Val Loss: 0.2585, Val Acc: 0.9076
+Epoch 10 done in 22.73 seconds. Train Loss: 0.2388, Train Acc: 0.9106, Val Loss: 0.2640, Val Acc: 0.9082
+Test Loss: 0.2766, Test Acc: 0.9010
+Epoch 1 done in 36.34 seconds. Train Loss: 0.5210, Train Acc: 0.8090, Val Loss: 0.3577, Val Acc: 0.8700
+Epoch 2 done in 36.31 seconds. Train Loss: 0.3896, Train Acc: 0.8555, Val Loss: 0.3178, Val Acc: 0.8821
+Epoch 3 done in 36.00 seconds. Train Loss: 0.3535, Train Acc: 0.8675, Val Loss: 0.2970, Val Acc: 0.8915
+Epoch 4 done in 35.90 seconds. Train Loss: 0.3262, Train Acc: 0.8779, Val Loss: 0.2723, Val Acc: 0.8998
+Epoch 5 done in 35.85 seconds. Train Loss: 0.3108, Train Acc: 0.8841, Val Loss: 0.2677, Val Acc: 0.9030
+Epoch 6 done in 35.79 seconds. Train Loss: 0.2970, Train Acc: 0.8900, Val Loss: 0.2724, Val Acc: 0.9005
+Epoch 7 done in 35.74 seconds. Train Loss: 0.2846, Train Acc: 0.8938, Val Loss: 0.2454, Val Acc: 0.9078
+Epoch 8 done in 35.62 seconds. Train Loss: 0.2751, Train Acc: 0.8967, Val Loss: 0.2512, Val Acc: 0.9078
+Epoch 9 done in 35.65 seconds. Train Loss: 0.2696, Train Acc: 0.8982, Val Loss: 0.2358, Val Acc: 0.9166
+Epoch 10 done in 35.64 seconds. Train Loss: 0.2618, Train Acc: 0.9028, Val Loss: 0.2314, Val Acc: 0.9162
+Test Loss: 0.2519, Test Acc: 0.9075
