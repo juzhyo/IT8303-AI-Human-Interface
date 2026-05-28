@@ -1,0 +1,76 @@
+--- PREPARING DATA ---
+
+======================================
+   PHASE 1: BASELINE CNN (NO AUGMENTATION)   
+======================================
+Epoch 01/10 | Train Acc: 0.8489 | Val Acc: 0.8629
+Epoch 02/10 | Train Acc: 0.8928 | Val Acc: 0.8952
+Epoch 03/10 | Train Acc: 0.9063 | Val Acc: 0.9040
+Epoch 04/10 | Train Acc: 0.9188 | Val Acc: 0.9090
+Epoch 05/10 | Train Acc: 0.9256 | Val Acc: 0.9149
+Epoch 06/10 | Train Acc: 0.9350 | Val Acc: 0.9123
+Epoch 07/10 | Train Acc: 0.9404 | Val Acc: 0.9077
+Epoch 08/10 | Train Acc: 0.9461 | Val Acc: 0.9092
+Epoch 09/10 | Train Acc: 0.9509 | Val Acc: 0.9153
+Epoch 10/10 | Train Acc: 0.9554 | Val Acc: 0.9154
+
+======================================
+ PHASE 2: BASELINE CNN + AUGMENTATION 
+======================================
+Epoch 01/10 | Train Acc: 0.8159 | Val Acc: 0.8654
+Epoch 02/10 | Train Acc: 0.8663 | Val Acc: 0.8836
+Epoch 03/10 | Train Acc: 0.8794 | Val Acc: 0.8866
+Epoch 04/10 | Train Acc: 0.8864 | Val Acc: 0.8966
+Epoch 05/10 | Train Acc: 0.8911 | Val Acc: 0.9003
+Epoch 06/10 | Train Acc: 0.8975 | Val Acc: 0.9024
+Epoch 07/10 | Train Acc: 0.9010 | Val Acc: 0.9091
+Epoch 08/10 | Train Acc: 0.9045 | Val Acc: 0.9018
+Epoch 09/10 | Train Acc: 0.9074 | Val Acc: 0.9111
+Epoch 10/10 | Train Acc: 0.9113 | Val Acc: 0.9102
+
+======================================
+ PHASE 3: UPGRADED CNN + LR SCHEDULER 
+======================================
+Epoch 01/20 | Train Acc: 0.8065 | Val Acc: 0.8646
+Epoch 02/20 | Train Acc: 0.8568 | Val Acc: 0.8866
+Epoch 03/20 | Train Acc: 0.8689 | Val Acc: 0.8914
+Epoch 04/20 | Train Acc: 0.8779 | Val Acc: 0.8991
+Epoch 05/20 | Train Acc: 0.8855 | Val Acc: 0.8932
+Epoch 06/20 | Train Acc: 0.8889 | Val Acc: 0.9004
+Epoch 07/20 | Train Acc: 0.8938 | Val Acc: 0.9048
+Epoch 08/20 | Train Acc: 0.8944 | Val Acc: 0.9081
+Epoch 09/20 | Train Acc: 0.8994 | Val Acc: 0.9145
+Epoch 10/20 | Train Acc: 0.9011 | Val Acc: 0.9156
+Epoch 11/20 | Train Acc: 0.9030 | Val Acc: 0.9138
+Epoch 12/20 | Train Acc: 0.9067 | Val Acc: 0.9174
+Epoch 13/20 | Train Acc: 0.9082 | Val Acc: 0.9155
+Epoch 14/20 | Train Acc: 0.9080 | Val Acc: 0.9189
+Epoch 15/20 | Train Acc: 0.9105 | Val Acc: 0.9209
+Epoch 16/20 | Train Acc: 0.9126 | Val Acc: 0.9171
+Epoch 17/20 | Train Acc: 0.9129 | Val Acc: 0.9252
+Epoch 18/20 | Train Acc: 0.9129 | Val Acc: 0.9182
+Epoch 19/20 | Train Acc: 0.9162 | Val Acc: 0.9203
+Epoch 20/20 | Train Acc: 0.9174 | Val Acc: 0.9202
+
+======================================
+     FINAL TEST SET EVALUATION        
+======================================
+              precision    recall  f1-score   support
+
+ T-shirt/top       0.88      0.86      0.87      1000
+     Trouser       0.99      0.98      0.99      1000
+    Pullover       0.81      0.93      0.86      1000
+       Dress       0.92      0.92      0.92      1000
+        Coat       0.85      0.86      0.86      1000
+      Sandal       0.99      0.97      0.98      1000
+       Shirt       0.81      0.69      0.75      1000
+     Sneaker       0.96      0.97      0.96      1000
+         Bag       0.98      0.99      0.98      1000
+  Ankle boot       0.96      0.97      0.97      1000
+
+    accuracy                           0.92     10000
+   macro avg       0.92      0.92      0.91     10000
+weighted avg       0.92      0.92      0.91     10000
+
+
+✅ Script complete. All three performance graphs saved to ./ca1/img/
