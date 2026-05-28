@@ -32,7 +32,7 @@ jobs:
 
     # 5. Run the script and save the printed terminal output
     - name: Run Training Script
-      run: python ./ca1/ca1.py > output_log.txt
+      run: python ca1.py > output_log.txt
 
     # 6. Upload the text file and images (UPDATED TO v4 TO FIX YOUR ERROR)
     - name: Upload Output Artifacts

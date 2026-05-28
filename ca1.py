@@ -8,7 +8,7 @@ import time
 import matplotlib.pyplot as plt
 import sys
 
-train_data = datasets.FashionMNIST(root='./data', train=True, download=True)
+train_data = datasets.FashionMNIST(root='./ca1/data', train=True, download=True)
 
 # Determine normalization parameters
 data = train_data.data.float()/255.0
@@ -25,7 +25,7 @@ transform = transforms.Compose([
 ])
 
 # Split into training and validation sets
-train_data = datasets.FashionMNIST(root='./data', train=True, download=True, transform=transform)
+train_data = datasets.FashionMNIST(root='./ca1/data', train=True, download=True, transform=transform)
 train_size = int(0.8*len(train_data))
 val_size = len(train_data) - train_size 
 train_data, val_data = torch.utils.data.random_split(train_data, [train_size, val_size])
@@ -33,7 +33,7 @@ train_loader = DataLoader(train_data, batch_size=64, shuffle=True)
 val_loader = DataLoader(val_data, batch_size=64, shuffle=False)
 
 # Load test data
-test_data = datasets.FashionMNIST(root='./data', train=False, download=True, transform=transform)
+test_data = datasets.FashionMNIST(root='./ca1/data', train=False, download=True, transform=transform)
 test_loader = DataLoader(test_data, batch_size=64, shuffle=False)
 test_size = len(test_data)
 
@@ -177,8 +177,8 @@ test_transform = transforms.Compose([
 ])
 
 # 2. Load the dataset twice with the different transforms
-train_data_full = datasets.FashionMNIST(root='./data', train=True, download=True, transform=train_transform)
-val_data_full = datasets.FashionMNIST(root='./data', train=True, download=True, transform=test_transform)
+train_data_full = datasets.FashionMNIST(root='./ca1/data', train=True, download=True, transform=train_transform)
+val_data_full = datasets.FashionMNIST(root='./ca1/data', train=True, download=True, transform=test_transform)
 
 # 3. Calculate sizes and generate fixed random indices
 train_size = int(0.8 * len(train_data_full))
@@ -197,7 +197,7 @@ train_loader = DataLoader(train_data, batch_size=64, shuffle=True)
 val_loader = DataLoader(val_data, batch_size=64, shuffle=False)
 
 # Load test data (using test_transform)
-test_data = datasets.FashionMNIST(root='./data', train=False, download=True, transform=test_transform)
+test_data = datasets.FashionMNIST(root='./ca1/data', train=False, download=True, transform=test_transform)
 test_loader = DataLoader(test_data, batch_size=64, shuffle=False)
 
 # Define a simple CNN model
@@ -314,8 +314,8 @@ test_transform = transforms.Compose([
 ])
 
 # 2. Load the dataset twice with the different transforms
-train_data_full = datasets.FashionMNIST(root='./data', train=True, download=True, transform=train_transform)
-val_data_full = datasets.FashionMNIST(root='./data', train=True, download=True, transform=test_transform)
+train_data_full = datasets.FashionMNIST(root='./ca1/data', train=True, download=True, transform=train_transform)
+val_data_full = datasets.FashionMNIST(root='./ca1/data', train=True, download=True, transform=test_transform)
 
 # 3. Calculate sizes and generate fixed random indices
 train_size = int(0.8 * len(train_data_full))
@@ -334,7 +334,7 @@ train_loader = DataLoader(train_data, batch_size=64, shuffle=True)
 val_loader = DataLoader(val_data, batch_size=64, shuffle=False)
 
 # Load test data (using test_transform)
-test_data = datasets.FashionMNIST(root='./data', train=False, download=True, transform=test_transform)
+test_data = datasets.FashionMNIST(root='./ca1/data', train=False, download=True, transform=test_transform)
 test_loader = DataLoader(test_data, batch_size=64, shuffle=False)
 
 cnn_model = nn.Sequential(
