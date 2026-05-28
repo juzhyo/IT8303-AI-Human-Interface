@@ -31,7 +31,7 @@ jobs:
       run: mkdir -p ./ca1/img
 
     - name: Run Training Script
-      run: python ca1.py > output_log.txt
+      run: python -u ca1.py | tee output_log.txt
 
     # 2. REPLACE ARTIFACT UPLOAD WITH COMMIT & PUSH
     - name: Commit and Push results

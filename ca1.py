@@ -1,456 +1,285 @@
 #!/usr/bin/env python3
 
+import os
 import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader
 from torchvision import datasets, transforms
 import time
 import matplotlib.pyplot as plt
-import sys
+import random
+import numpy as np
+from sklearn.metrics import classification_report
 
-train_data = datasets.FashionMNIST(root='./ca1/data', train=True, download=True)
+# ==========================================
+# 0. SETUP & REPRODUCIBILITY
+# ==========================================
+os.makedirs('./ca1/data', exist_ok=True)
+os.makedirs('./ca1/img', exist_ok=True)
 
-# Determine normalization parameters
-data = train_data.data.float()/255.0
-mean = data.mean()
-std = data.std()
+def set_seed(seed=42):
+    random.seed(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    torch.cuda.manual_seed_all(seed)
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.benchmark = False
 
-print(f"Calculated Mean: {mean:.4f}")
-print(f"Calculated Std Dev: {std:.4f}\n")
+set_seed(42)
 
-# Define the transform to convert images to PyTorch tensors
-transform = transforms.Compose([
+# ==========================================
+# 1. DATA PREPARATION (All Loaders)
+# ==========================================
+print("--- PREPARING DATA ---")
+train_data_raw = datasets.FashionMNIST(root='./ca1/data', train=True, download=True)
+data_tensor = train_data_raw.data.float() / 255.0
+mean, std = data_tensor.mean(), data_tensor.std()
+
+# 1. Baseline Transform (No Augmentation)
+transform_base = transforms.Compose([
     transforms.ToTensor(),
-    transforms.Normalize((mean.item(),), (std.item(),)) # Standard MNIST normalization
+    transforms.Normalize((mean.item(),), (std.item(),))
 ])
 
-# Split into training and validation sets
-train_data = datasets.FashionMNIST(root='./ca1/data', train=True, download=True, transform=transform)
-train_size = int(0.8*len(train_data))
-val_size = len(train_data) - train_size 
-train_data, val_data = torch.utils.data.random_split(train_data, [train_size, val_size])
-train_loader = DataLoader(train_data, batch_size=64, shuffle=True)
-val_loader = DataLoader(val_data, batch_size=64, shuffle=False)
+# 2. Augmented Transform
+transform_aug = transforms.Compose([
+    transforms.RandomHorizontalFlip(p=0.5),      
+    transforms.RandomRotation(degrees=10),       
+    transforms.ToTensor(),
+    transforms.Normalize((mean.item(),), (std.item(),))
+])
 
-# Load test data
-test_data = datasets.FashionMNIST(root='./ca1/data', train=False, download=True, transform=transform)
+# Load Datasets
+train_data_base = datasets.FashionMNIST(root='./ca1/data', train=True, download=True, transform=transform_base)
+train_data_aug = datasets.FashionMNIST(root='./ca1/data', train=True, download=True, transform=transform_aug)
+val_test_data = datasets.FashionMNIST(root='./ca1/data', train=True, download=True, transform=transform_base)
+
+# 80/20 Dynamic Split
+train_size = int(0.8 * len(train_data_base))
+val_size = len(train_data_base) - train_size
+split_generator = torch.Generator().manual_seed(42)
+indices = torch.randperm(len(train_data_base), generator=split_generator).tolist()
+
+# Create Loaders
+train_loader_base = DataLoader(torch.utils.data.Subset(train_data_base, indices[:train_size]), batch_size=64, shuffle=True)
+train_loader_aug = DataLoader(torch.utils.data.Subset(train_data_aug, indices[:train_size]), batch_size=64, shuffle=True)
+val_loader = DataLoader(torch.utils.data.Subset(val_test_data, indices[train_size:]), batch_size=64, shuffle=False)
+
+test_data = datasets.FashionMNIST(root='./ca1/data', train=False, download=True, transform=transform_base)
 test_loader = DataLoader(test_data, batch_size=64, shuffle=False)
-test_size = len(test_data)
 
-print(f'Total images: {train_size+val_size+test_size}')
-print(f'Training images: {train_size}')
-print(f'Validation images: {val_size}')
-print(f'Test images: {test_size}\n')
-
-# Sample 20 training images
-sample_indices = range(20)
-sample_images, sample_labels = zip(*[train_data[i] for i in sample_indices])
-
-# Visualize the 10 sample images in a 2x5 grid
-plt.figure(figsize=(4, 6))
-for i in range(20):
-    plt.subplot(5, 4, i + 1)
-    plt.imshow(sample_images[i].squeeze(), cmap='gray')
-    # plt.title(f'Label: {sample_labels[i]}')
-    plt.axis('off')
-plt.savefig('./ca1/img/samples.png',bbox_inches='tight',dpi=300)
-
-# Metrics
 def get_accuracy(outputs, labels):
     _, predictions = torch.max(outputs, 1)
     correct = (predictions == labels).sum().item()
     return correct / len(labels)
 
-######################
-# Baseline CNN model #
-######################
-print("***IMPLEMENT BASELINE CNN MODEL***\n")
 
-# Define a simple CNN model
-cnn_model = nn.Sequential(
-    # First Block: (1, 28, 28) --conv--> (32, 24, 24) --maxpool--> (32, 12, 12)
+# ==========================================
+# PHASE 1: BASELINE MODEL
+# ==========================================
+print("\n======================================")
+print("   PHASE 1: BASELINE CNN (NO AUGMENTATION)   ")
+print("======================================")
+
+base_model = nn.Sequential(
     nn.Conv2d(in_channels=1, out_channels=32, kernel_size=5),
     nn.ReLU(),
     nn.MaxPool2d(kernel_size=2),
-    
-    # Classifier
     nn.Dropout(0.2),
-    nn.Flatten(),               # Flattens 32*12*12 into 4608
+    nn.Flatten(),               
     nn.Linear(32*12*12, 128),
     nn.ReLU(),
-    nn.Linear(128, 10)          # 10 output classes
+    nn.Linear(128, 10)          
 )
 
-# Train CNN model
-cnn_model.train()  # Set model to training mode
-optimizer = torch.optim.Adam(cnn_model.parameters(), lr=0.001)
+optimizer = torch.optim.Adam(base_model.parameters(), lr=0.001)
 criterion = nn.CrossEntropyLoss()
 
-# Variables to store loss and accuracy history
-cnn_train_loss_history = []
-cnn_val_loss_history = []
-cnn_train_acc_history = []
-cnn_val_acc_history = []
+base_train_loss, base_val_loss = [], []
+base_train_acc, base_val_acc = [], []
 
-# Train the model for a few epochs
 epochs = 10
 for epoch in range(epochs):
-    cnn_model.train()  # IMPORTANT: Set model to training mode at the start of each epoch
-    train_loss = 0
-    train_acc = 0
-    start_time = time.time()
+    base_model.train()  
+    t_loss, t_acc, start_time = 0, 0, time.time()
     
-    for images, labels in train_loader:
-        optimizer.zero_grad()           # Reset gradients
-        output = cnn_model(images)      # Forward pass
-        loss = criterion(output, labels) # Calculate loss
-        loss.backward()                 # Backward pass
-        optimizer.step()                # Update weights
+    for images, labels in train_loader_base: # <--- USING BASELINE LOADER
+        optimizer.zero_grad()
+        output = base_model(images)
+        loss = criterion(output, labels)
+        loss.backward()
+        optimizer.step()
+        t_loss += loss.item()
+        t_acc += get_accuracy(output, labels)
         
-        train_loss += loss.item()
-        train_acc += get_accuracy(output, labels)
-        
-    end_time = time.time()
-    
-    # Track loss and accuracy for training set
-    cnn_train_loss_history.append(train_loss / len(train_loader))
-    cnn_train_acc_history.append(train_acc / len(train_loader))
+    base_train_loss.append(t_loss / len(train_loader_base))
+    base_train_acc.append(t_acc / len(train_loader_base))
 
-    # Validate the model
-    cnn_model.eval()  # IMPORTANT: Set to evaluation mode to disable Dropout during validation
+    base_model.eval() 
     with torch.no_grad():
-        val_loss = 0
-        val_acc = 0
+        v_loss, v_acc = 0, 0
         for val_images, val_labels in val_loader:
-            val_output = cnn_model(val_images)
-            val_loss += criterion(val_output, val_labels).item()
-            val_acc += get_accuracy(val_output, val_labels)
-            
-        cnn_val_loss_history.append(val_loss / len(val_loader))
-        cnn_val_acc_history.append(val_acc / len(val_loader))
+            val_output = base_model(val_images)
+            v_loss += criterion(val_output, val_labels).item()
+            v_acc += get_accuracy(val_output, val_labels)
+        base_val_loss.append(v_loss / len(val_loader))
+        base_val_acc.append(v_acc / len(val_loader))
         
-    print(f"Epoch {epoch+1} done in {end_time - start_time:.2f} seconds. "
-          f"Train Loss: {cnn_train_loss_history[-1]:.4f}, Train Acc: {cnn_train_acc_history[-1]:.4f}, "
-          f"Val Loss: {cnn_val_loss_history[-1]:.4f}, Val Acc: {cnn_val_acc_history[-1]:.4f}")
+    print(f"Epoch {epoch+1:02d}/{epochs} | Train Acc: {base_train_acc[-1]:.4f} | Val Acc: {base_val_acc[-1]:.4f}")
 
-# Test the model on the test set
-cnn_model.eval()  # Set model to evaluation mode
-test_loss = 0
-test_acc = 0
-with torch.no_grad():
-    for test_images, test_labels in test_loader:
-        test_output = cnn_model(test_images)
-        test_loss += criterion(test_output, test_labels).item()
-        test_acc += get_accuracy(test_output, test_labels)
-print(f"\nTest Loss: {test_loss / len(test_loader):.4f}, Test Acc: {test_acc / len(test_loader):.4f}")
-
-# Plot training and validation loss/accuracy curves
 plt.figure(figsize=(6, 8))
+plt.subplot(2, 1, 1); plt.plot(base_train_loss, 'k', label='Train'); plt.plot(base_val_loss, 'darkred', label='Val'); plt.title('Baseline Loss'); plt.legend(frameon=False)
+plt.subplot(2, 1, 2); plt.plot(base_train_acc, 'k'); plt.plot(base_val_acc, 'darkred'); plt.title('Baseline Accuracy')
+plt.tight_layout(); plt.savefig("./ca1/img/baseline_performance.png", bbox_inches='tight', dpi=300); plt.close()
 
-plt.subplot(2, 1, 1)
-plt.plot(cnn_train_loss_history, label='Train Loss',color='k',alpha=0.6)
-plt.plot(cnn_val_loss_history, label='Validation Loss',color='darkred',alpha=0.6)
-plt.xlabel('Epoch')
-plt.ylabel('Loss')
-plt.legend(frameon=False)
-plt.title('CNN Training and Validation Loss')
 
-plt.subplot(2, 1, 2)
-plt.plot(cnn_train_acc_history, label='Train Accuracy',color='k',alpha=0.6)
-plt.plot(cnn_val_acc_history, label='Validation Accuracy',color='darkred',alpha=0.6)
-plt.xlabel('Epoch')
-plt.ylabel('Accuracy')
-plt.legend(frameon=False)
-plt.title('CNN Training and Validation Accuracy')
+# ==========================================
+# PHASE 2: AUGMENTATION MODEL
+# ==========================================
+print("\n======================================")
+print(" PHASE 2: BASELINE CNN + AUGMENTATION ")
+print("======================================")
 
-plt.tight_layout()
-
-plt.savefig("./ca1/img/baseline_perfomance.png",bbox_inches='tight',dpi=300)
-
-#####################
-# Data Augmentation #
-#####################
-print("***IMPLEMENT DATA AUGMENTATION***\n")
-
-train_transform = transforms.Compose([
-    transforms.RandomHorizontalFlip(p=0.5),      # 50% chance to flip horizontally
-    transforms.RandomRotation(degrees=10),       # Rotate by up to +/- 10 degrees
-    transforms.ToTensor(),
-    transforms.Normalize((mean.item(),), (std.item(),))
-])
-
-# Val/Test transform ONLY gets tensor conversion and normalization
-test_transform = transforms.Compose([
-    transforms.ToTensor(),
-    transforms.Normalize((mean.item(),), (std.item(),))
-])
-
-# 2. Load the dataset twice with the different transforms
-train_data_full = datasets.FashionMNIST(root='./ca1/data', train=True, download=True, transform=train_transform)
-val_data_full = datasets.FashionMNIST(root='./ca1/data', train=True, download=True, transform=test_transform)
-
-# 3. Calculate sizes and generate fixed random indices
-train_size = int(0.8 * len(train_data_full))
-val_size = len(train_data_full) - train_size
-
-# We use randperm to generate a shuffled list of indices, locked by our generator
-split_generator = torch.Generator().manual_seed(42)
-indices = torch.randperm(len(train_data_full), generator=split_generator).tolist()
-
-# 4. Create the final datasets using Subsets
-train_data = torch.utils.data.Subset(train_data_full, indices[:train_size])
-val_data = torch.utils.data.Subset(val_data_full, indices[train_size:])
-
-# 5. Create DataLoaders
-train_loader = DataLoader(train_data, batch_size=64, shuffle=True)
-val_loader = DataLoader(val_data, batch_size=64, shuffle=False)
-
-# Load test data (using test_transform)
-test_data = datasets.FashionMNIST(root='./ca1/data', train=False, download=True, transform=test_transform)
-test_loader = DataLoader(test_data, batch_size=64, shuffle=False)
-
-# Define a simple CNN model
-cnn_model = nn.Sequential(
-    # First Block: (1, 28, 28) --conv--> (32, 24, 24) --maxpool--> (32, 12, 12)
+# Reinitialize the exact same architecture for a fair test
+aug_model = nn.Sequential(
     nn.Conv2d(in_channels=1, out_channels=32, kernel_size=5),
     nn.ReLU(),
     nn.MaxPool2d(kernel_size=2),
-    
-    # Classifier
     nn.Dropout(0.2),
-    nn.Flatten(),               # Flattens 32*12*12 into 4608
+    nn.Flatten(),               
     nn.Linear(32*12*12, 128),
     nn.ReLU(),
-    nn.Linear(128, 10)          # 10 output classes
+    nn.Linear(128, 10)          
 )
 
-# Train CNN model
-cnn_model.train()  # Set model to training mode
-optimizer = torch.optim.Adam(cnn_model.parameters(), lr=0.001)
-criterion = nn.CrossEntropyLoss()
+optimizer = torch.optim.Adam(aug_model.parameters(), lr=0.001)
 
-# Variables to store loss and accuracy history
-cnn_train_loss_history = []
-cnn_val_loss_history = []
-cnn_train_acc_history = []
-cnn_val_acc_history = []
+aug_train_loss, aug_val_loss = [], []
+aug_train_acc, aug_val_acc = [], []
 
-# Train the model for a few epochs
-epochs = 10
 for epoch in range(epochs):
-    cnn_model.train()  # IMPORTANT: Set model to training mode at the start of each epoch
-    train_loss = 0
-    train_acc = 0
-    start_time = time.time()
+    aug_model.train()  
+    t_loss, t_acc = 0, 0
     
-    for images, labels in train_loader:
-        optimizer.zero_grad()           # Reset gradients
-        output = cnn_model(images)      # Forward pass
-        loss = criterion(output, labels) # Calculate loss
-        loss.backward()                 # Backward pass
-        optimizer.step()                # Update weights
+    for images, labels in train_loader_aug: # <--- USING AUGMENTED LOADER
+        optimizer.zero_grad()
+        output = aug_model(images)
+        loss = criterion(output, labels)
+        loss.backward()
+        optimizer.step()
+        t_loss += loss.item()
+        t_acc += get_accuracy(output, labels)
         
-        train_loss += loss.item()
-        train_acc += get_accuracy(output, labels)
-        
-    end_time = time.time()
-    
-    # Track loss and accuracy for training set
-    cnn_train_loss_history.append(train_loss / len(train_loader))
-    cnn_train_acc_history.append(train_acc / len(train_loader))
+    aug_train_loss.append(t_loss / len(train_loader_aug))
+    aug_train_acc.append(t_acc / len(train_loader_aug))
 
-    # Validate the model
-    cnn_model.eval()  # IMPORTANT: Set to evaluation mode to disable Dropout during validation
+    aug_model.eval() 
     with torch.no_grad():
-        val_loss = 0
-        val_acc = 0
+        v_loss, v_acc = 0, 0
         for val_images, val_labels in val_loader:
-            val_output = cnn_model(val_images)
-            val_loss += criterion(val_output, val_labels).item()
-            val_acc += get_accuracy(val_output, val_labels)
-            
-        cnn_val_loss_history.append(val_loss / len(val_loader))
-        cnn_val_acc_history.append(val_acc / len(val_loader))
+            val_output = aug_model(val_images)
+            v_loss += criterion(val_output, val_labels).item()
+            v_acc += get_accuracy(val_output, val_labels)
+        aug_val_loss.append(v_loss / len(val_loader))
+        aug_val_acc.append(v_acc / len(val_loader))
         
-    print(f"Epoch {epoch+1} done in {end_time - start_time:.2f} seconds. "
-          f"Train Loss: {cnn_train_loss_history[-1]:.4f}, Train Acc: {cnn_train_acc_history[-1]:.4f}, "
-          f"Val Loss: {cnn_val_loss_history[-1]:.4f}, Val Acc: {cnn_val_acc_history[-1]:.4f}")
+    print(f"Epoch {epoch+1:02d}/{epochs} | Train Acc: {aug_train_acc[-1]:.4f} | Val Acc: {aug_val_acc[-1]:.4f}")
 
-# Test the model on the test set
-cnn_model.eval()  # Set model to evaluation mode
-test_loss = 0
-test_acc = 0
-with torch.no_grad():
-    for test_images, test_labels in test_loader:
-        test_output = cnn_model(test_images)
-        test_loss += criterion(test_output, test_labels).item()
-        test_acc += get_accuracy(test_output, test_labels)
-print(f"\nTest Loss: {test_loss / len(test_loader):.4f}, Test Acc: {test_acc / len(test_loader):.4f}")
-
-# Plot training and validation loss/accuracy curves
 plt.figure(figsize=(6, 8))
+plt.subplot(2, 1, 1); plt.plot(aug_train_loss, 'k', label='Train'); plt.plot(aug_val_loss, 'darkred', label='Val'); plt.title('Augmented Loss'); plt.legend(frameon=False)
+plt.subplot(2, 1, 2); plt.plot(aug_train_acc, 'k'); plt.plot(aug_val_acc, 'darkred'); plt.title('Augmented Accuracy')
+plt.tight_layout(); plt.savefig("./ca1/img/augment_performance.png", bbox_inches='tight', dpi=300); plt.close()
 
-plt.subplot(2, 1, 1)
-plt.plot(cnn_train_loss_history, label='Train Loss',color='k',alpha=0.6)
-plt.plot(cnn_val_loss_history, label='Validation Loss',color='darkred',alpha=0.6)
-plt.xlabel('Epoch')
-plt.ylabel('Loss')
-plt.legend(frameon=False)
-plt.title('CNN Training and Validation Loss')
 
-plt.subplot(2, 1, 2)
-plt.plot(cnn_train_acc_history, label='Train Accuracy',color='k',alpha=0.6)
-plt.plot(cnn_val_acc_history, label='Validation Accuracy',color='darkred',alpha=0.6)
-plt.xlabel('Epoch')
-plt.ylabel('Accuracy')
-plt.legend(frameon=False)
-plt.title('CNN Training and Validation Accuracy')
-plt.tight_layout()
-plt.savefig("./ca1/img/augment_perfomance.png",bbox_inches='tight',dpi=300)
+# ==========================================
+# PHASE 3: FINAL UPGRADED MODEL
+# ==========================================
+print("\n======================================")
+print(" PHASE 3: UPGRADED CNN + LR SCHEDULER ")
+print("======================================")
 
-#####################
-# Model improvement #
-#####################
-print("***IMPLEMENT MODEL IMPROVEMENTS***\n")
-
-train_transform = transforms.Compose([
-    transforms.RandomHorizontalFlip(p=0.5),      # 50% chance to flip horizontally
-    transforms.RandomRotation(degrees=10),       # Rotate by up to +/- 10 degrees
-    transforms.ToTensor(),
-    transforms.Normalize((mean.item(),), (std.item(),))
-])
-
-# Val/Test transform ONLY gets tensor conversion and normalization
-test_transform = transforms.Compose([
-    transforms.ToTensor(),
-    transforms.Normalize((mean.item(),), (std.item(),))
-])
-
-# 2. Load the dataset twice with the different transforms
-train_data_full = datasets.FashionMNIST(root='./ca1/data', train=True, download=True, transform=train_transform)
-val_data_full = datasets.FashionMNIST(root='./ca1/data', train=True, download=True, transform=test_transform)
-
-# 3. Calculate sizes and generate fixed random indices
-train_size = int(0.8 * len(train_data_full))
-val_size = len(train_data_full) - train_size
-
-# We use randperm to generate a shuffled list of indices, locked by our generator
-split_generator = torch.Generator().manual_seed(42)
-indices = torch.randperm(len(train_data_full), generator=split_generator).tolist()
-
-# 4. Create the final datasets using Subsets
-train_data = torch.utils.data.Subset(train_data_full, indices[:train_size])
-val_data = torch.utils.data.Subset(val_data_full, indices[train_size:])
-
-# 5. Create DataLoaders
-train_loader = DataLoader(train_data, batch_size=64, shuffle=True)
-val_loader = DataLoader(val_data, batch_size=64, shuffle=False)
-
-# Load test data (using test_transform)
-test_data = datasets.FashionMNIST(root='./ca1/data', train=False, download=True, transform=test_transform)
-test_loader = DataLoader(test_data, batch_size=64, shuffle=False)
-
-cnn_model = nn.Sequential(
-    # First Block: (1, 28, 28) --> (32, 12, 12)
-    nn.Conv2d(in_channels=1, out_channels=32, kernel_size=5, padding=2), # Added padding to keep spatial size
+final_model = nn.Sequential(
+    nn.Conv2d(in_channels=1, out_channels=32, kernel_size=5, padding=2), 
     nn.BatchNorm2d(32),
     nn.ReLU(),
     nn.MaxPool2d(kernel_size=2),
     
-    # Second Block: (32, 14, 14) --> (64, 7, 7)
     nn.Conv2d(in_channels=32, out_channels=64, kernel_size=3, padding=1),
     nn.BatchNorm2d(64),
     nn.ReLU(),
     nn.MaxPool2d(kernel_size=2),
     
-    # Classifier
-    nn.Flatten(),               # Flattens 64 * 7 * 7 into 3136
-    nn.Dropout(0.5),            # Increased dropout for better regularization
+    nn.Flatten(),               
+    nn.Dropout(0.5),             
     nn.Linear(64 * 7 * 7, 128),
     nn.ReLU(),
     nn.Linear(128, 10)          
 )
 
-# Train CNN model
-cnn_model.train()  # Set model to training mode
-optimizer = torch.optim.Adam(cnn_model.parameters(), lr=0.001)
-criterion = nn.CrossEntropyLoss()
+optimizer = torch.optim.Adam(final_model.parameters(), lr=0.001)
+scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.5, patience=2)
 
-# Variables to store loss and accuracy history
-cnn_train_loss_history = []
-cnn_val_loss_history = []
-cnn_train_acc_history = []
-cnn_val_acc_history = []
+final_train_loss, final_val_loss = [], []
+final_train_acc, final_val_acc = [], []
 
-# Train the model for a few epochs
-epochs = 20
-for epoch in range(epochs):
-    cnn_model.train()  # IMPORTANT: Set model to training mode at the start of each epoch
-    train_loss = 0
-    train_acc = 0
-    start_time = time.time()
+epochs_final = 20  # Train longer to see the scheduler work
+for epoch in range(epochs_final):
+    final_model.train()  
+    t_loss, t_acc = 0, 0
     
-    for images, labels in train_loader:
-        optimizer.zero_grad()           # Reset gradients
-        output = cnn_model(images)      # Forward pass
-        loss = criterion(output, labels) # Calculate loss
-        loss.backward()                 # Backward pass
-        optimizer.step()                # Update weights
+    for images, labels in train_loader_aug: 
+        optimizer.zero_grad()
+        output = final_model(images)
+        loss = criterion(output, labels)
+        loss.backward()
+        optimizer.step()
+        t_loss += loss.item()
+        t_acc += get_accuracy(output, labels)
         
-        train_loss += loss.item()
-        train_acc += get_accuracy(output, labels)
-        
-    end_time = time.time()
-    
-    # Track loss and accuracy for training set
-    cnn_train_loss_history.append(train_loss / len(train_loader))
-    cnn_train_acc_history.append(train_acc / len(train_loader))
+    final_train_loss.append(t_loss / len(train_loader_aug))
+    final_train_acc.append(t_acc / len(train_loader_aug))
 
-    # Validate the model
-    cnn_model.eval()  # IMPORTANT: Set to evaluation mode to disable Dropout during validation
+    final_model.eval() 
     with torch.no_grad():
-        val_loss = 0
-        val_acc = 0
+        v_loss, v_acc = 0, 0
         for val_images, val_labels in val_loader:
-            val_output = cnn_model(val_images)
-            val_loss += criterion(val_output, val_labels).item()
-            val_acc += get_accuracy(val_output, val_labels)
-            
-        cnn_val_loss_history.append(val_loss / len(val_loader))
-        cnn_val_acc_history.append(val_acc / len(val_loader))
+            val_output = final_model(val_images)
+            v_loss += criterion(val_output, val_labels).item()
+            v_acc += get_accuracy(val_output, val_labels)
+        final_val_loss.append(v_loss / len(val_loader))
+        final_val_acc.append(v_acc / len(val_loader))
         
-    print(f"Epoch {epoch+1} done in {end_time - start_time:.2f} seconds. "
-          f"Train Loss: {cnn_train_loss_history[-1]:.4f}, Train Acc: {cnn_train_acc_history[-1]:.4f}, "
-          f"Val Loss: {cnn_val_loss_history[-1]:.4f}, Val Acc: {cnn_val_acc_history[-1]:.4f}")
+    print(f"Epoch {epoch+1:02d}/{epochs_final} | Train Acc: {final_train_acc[-1]:.4f} | Val Acc: {final_val_acc[-1]:.4f}")
+    scheduler.step(final_val_loss[-1])
 
-# Test the model on the test set
-cnn_model.eval()  # Set model to evaluation mode
-test_loss = 0
-test_acc = 0
+plt.figure(figsize=(6, 8))
+plt.subplot(2, 1, 1); plt.plot(final_train_loss, 'k', label='Train'); plt.plot(final_val_loss, 'darkred', label='Val'); plt.title('Final Upgraded Loss'); plt.legend(frameon=False)
+plt.subplot(2, 1, 2); plt.plot(final_train_acc, 'k'); plt.plot(final_val_acc, 'darkred'); plt.title('Final Upgraded Accuracy')
+plt.tight_layout(); plt.savefig("./ca1/img/final_performance.png", bbox_inches='tight', dpi=300); plt.close()
+
+
+# ==========================================
+# 4. TESTING & CLASSIFICATION REPORT
+# ==========================================
+print("\n======================================")
+print("     FINAL TEST SET EVALUATION        ")
+print("======================================")
+
+final_model.eval()
+all_predictions = []
+all_true_labels = []
+
 with torch.no_grad():
     for test_images, test_labels in test_loader:
-        test_output = cnn_model(test_images)
-        test_loss += criterion(test_output, test_labels).item()
-        test_acc += get_accuracy(test_output, test_labels)
-print(f"\nTest Loss: {test_loss / len(test_loader):.4f}, Test Acc: {test_acc / len(test_loader):.4f}")
+        test_output = final_model(test_images)
+        _, predictions = torch.max(test_output, 1)
+        all_predictions.extend(predictions.cpu().numpy())
+        all_true_labels.extend(test_labels.cpu().numpy())
 
-# Plot training and validation loss/accuracy curves
-plt.figure(figsize=(6, 8))
+fashion_mnist_classes = [
+    "T-shirt/top", "Trouser", "Pullover", "Dress", "Coat", 
+    "Sandal", "Shirt", "Sneaker", "Bag", "Ankle boot"
+]
 
-plt.subplot(2, 1, 1)
-plt.plot(cnn_train_loss_history, label='Train Loss',color='k',alpha=0.6)
-plt.plot(cnn_val_loss_history, label='Validation Loss',color='darkred',alpha=0.6)
-plt.xlabel('Epoch')
-plt.ylabel('Loss')
-plt.legend(frameon=False)
-plt.title('CNN Training and Validation Loss')
-
-plt.subplot(2, 1, 2)
-plt.plot(cnn_train_acc_history, label='Train Accuracy',color='k',alpha=0.6)
-plt.plot(cnn_val_acc_history, label='Validation Accuracy',color='darkred',alpha=0.6)
-plt.xlabel('Epoch')
-plt.ylabel('Accuracy')
-plt.legend(frameon=False)
-plt.title('CNN Training and Validation Accuracy')
-plt.tight_layout()
-plt.savefig("./ca1/img/improved_perfomance.png",bbox_inches='tight',dpi=300)
+print(classification_report(all_true_labels, all_predictions, target_names=fashion_mnist_classes))
+print("\n✅ Script complete. All three performance graphs saved to ./ca1/img/")
