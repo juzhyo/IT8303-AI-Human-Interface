@@ -53,7 +53,7 @@ for i in range(20):
     plt.imshow(sample_images[i].squeeze(), cmap='gray')
     # plt.title(f'Label: {sample_labels[i]}')
     plt.axis('off')
-plt.savefig('./img/samples.png',bbox_inches='tight',dpi=300)
+plt.savefig('./ca1/img/samples.png',bbox_inches='tight',dpi=300)
 
 # Metrics
 def get_accuracy(outputs, labels):
@@ -160,7 +160,7 @@ plt.title('CNN Training and Validation Accuracy')
 
 plt.tight_layout()
 
-plt.savefig("./img/baseline_perfomance.png",bbox_inches='tight',dpi=300)
+plt.savefig("./ca1/img/baseline_perfomance.png",bbox_inches='tight',dpi=300)
 
 # Data Augmentation
 train_transform = transforms.Compose([
@@ -297,7 +297,7 @@ plt.ylabel('Accuracy')
 plt.legend(frameon=False)
 plt.title('CNN Training and Validation Accuracy')
 plt.tight_layout()
-plt.savefig("./img/augment_perfomance.png",bbox_inches='tight',dpi=300)
+plt.savefig("./ca1/img/augment_perfomance.png",bbox_inches='tight',dpi=300)
 
 # Model improvement
 train_transform = transforms.Compose([
@@ -440,4 +440,4 @@ plt.ylabel('Accuracy')
 plt.legend(frameon=False)
 plt.title('CNN Training and Validation Accuracy')
 plt.tight_layout()
-plt.savefig("./img/improved_perfomance.png",bbox_inches='tight',dpi=300)
+plt.savefig("./ca1/img/improved_perfomance.png",bbox_inches='tight',dpi=300)
