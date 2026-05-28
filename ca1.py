@@ -157,6 +157,8 @@ optimizer = torch.optim.Adam(aug_model.parameters(), lr=0.001)
 aug_train_loss, aug_val_loss = [], []
 aug_train_acc, aug_val_acc = [], []
 
+epochs = 15
+
 for epoch in range(epochs):
     aug_model.train()  
     t_loss, t_acc = 0, 0
