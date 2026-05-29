@@ -227,7 +227,7 @@ cnn_train_acc_history = []
 cnn_val_acc_history = []
 
 # Train the model for a few epochs
-epochs = 10
+epochs = 15
 for epoch in range(epochs):
     cnn_model.train()  # IMPORTANT: Set model to training mode at the start of each epoch
     train_loss = 0
@@ -302,7 +302,7 @@ plt.savefig("./ca1/img/augment_perfomance.png",bbox_inches='tight',dpi=300)
 #####################
 # Model improvement #
 #####################
-print("***IMPLEMENT MODEL IMPROVEMENTS***")
+print("***IMPLEMENT ARCHITECTURAL UPGRADES***")
 
 train_transform = transforms.Compose([
     transforms.RandomHorizontalFlip(p=0.5),      # 50% chance to flip horizontally
@@ -374,7 +374,7 @@ cnn_train_acc_history = []
 cnn_val_acc_history = []
 
 # Train the model for a few epochs
-epochs = 20
+epochs = 30
 for epoch in range(epochs):
     cnn_model.train()  # IMPORTANT: Set model to training mode at the start of each epoch
     train_loss = 0
@@ -449,111 +449,178 @@ plt.savefig("./ca1/img/architecture_perfomance.png",bbox_inches='tight',dpi=300)
 #########################
 # HYPERPARAMETER TUNING #
 #########################
-print("\n***IMPLEMENT HYPERPARAMETER TUNING (Grid Search + LR Scheduler)***")
+print("\n***IMPLEMENT HYPERPARAMETER TUNING (Deep Grid Search)***")
 import copy
 
-# 1. Define the parameters to test in our Grid Search
-# Keeping it to 4 combinations (2x2) so it doesn't take hours on a CPU
-dropout_rates = [0.4, 0.6]         
-weight_decays = [1e-4, 1e-5]       
+# 1. Scaled-up Grid Search Parameters (2 x 4 x 3 x 2 = 48 combinations)
+starting_lrs = [0.001, 0.0005]
+dropout_rates = [0.3, 0.4, 0.5, 0.6]         
+weight_decays = [1e-3, 1e-4, 1e-5]       
+kernel_configs = [(5, 2), (3, 1)] 
 
 best_val_acc = 0.0
 best_params = {}
-best_model_state = None  # This will store the winning model's exact weights
+best_model_state = None  
 
-# We'll use 8 epochs per test. (Increase this if you ever use a GPU!)
-tuning_epochs = 8 
+# 10 epochs per model. (48 models * 10 = 480 total epochs for this block)
+# Estimated time: ~4.5 to 5.5 hours on GitHub free-tier CPU runners.
+tuning_epochs = 10 
 
-for drop_rate in dropout_rates:
-    for wd in weight_decays:
-        print(f"\n--- Testing Dropout: {drop_rate} | Weight Decay: {wd} ---")
-        
-        # 2. Initialize a fresh model for this specific loop
-        model = nn.Sequential(
-            nn.Conv2d(in_channels=1, out_channels=32, kernel_size=5, padding=2), 
-            nn.BatchNorm2d(32),
-            nn.ReLU(),
-            nn.MaxPool2d(kernel_size=2),
-            
-            nn.Conv2d(in_channels=32, out_channels=64, kernel_size=3, padding=1),
-            nn.BatchNorm2d(64),
-            nn.ReLU(),
-            nn.MaxPool2d(kernel_size=2),
-            
-            nn.Flatten(),               
-            nn.Dropout(drop_rate), # <--- Inject the loop's dropout rate
-            nn.Linear(64 * 7 * 7, 128),
-            nn.ReLU(),
-            nn.Linear(128, 10)          
-        )
-        
-        # 3. Setup Optimizer with loop's weight decay, and attach the LR Scheduler
-        optimizer = torch.optim.Adam(model.parameters(), lr=0.001, weight_decay=wd)
-        scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.5, patience=2)
-        criterion = nn.CrossEntropyLoss()
-        
-        current_val_acc = 0
-        
-        # 4. Short training loop
-        for epoch in range(tuning_epochs):
-            model.train()
-            for images, labels in train_loader:
-                optimizer.zero_grad()
-                output = model(images)
-                loss = criterion(output, labels)
-                loss.backward()
-                optimizer.step()
-            
-            # Validation phase
-            model.eval()
-            val_loss = 0
-            val_acc = 0
-            with torch.no_grad():
-                for val_images, val_labels in val_loader:
-                    val_output = model(val_images)
-                    val_loss += criterion(val_output, val_labels).item()
-                    val_acc += get_accuracy(val_output, val_labels)
-            
-            val_loss /= len(val_loader)
-            val_acc /= len(val_loader)
-            current_val_acc = val_acc 
-            
-            # Step the scheduler dynamically based on validation loss
-            scheduler.step(val_loss)
-        
-        print(f"Result -> Final Val Accuracy: {current_val_acc:.4f}")
-        
-        # 5. Save the model if it beat the previous high score!
-        if current_val_acc > best_val_acc:
-            best_val_acc = current_val_acc
-            best_params = {'dropout': drop_rate, 'weight_decay': wd}
-            # Deepcopy saves the actual weights, not just the reference
-            best_model_state = copy.deepcopy(model.state_dict())
+for lr in starting_lrs:
+    for drop_rate in dropout_rates:
+        for wd in weight_decays:
+            for k_size, k_pad in kernel_configs:
+                print(f"\n--- Testing LR: {lr} | Drop: {drop_rate} | WD: {wd} | Kernel: {k_size}x{k_size} ---")
+                
+                # 2. Initialize a fresh model using the loop's specific kernel configuration
+                model = nn.Sequential(
+                    nn.Conv2d(in_channels=1, out_channels=32, kernel_size=k_size, padding=k_pad), 
+                    nn.BatchNorm2d(32),
+                    nn.ReLU(),
+                    nn.MaxPool2d(kernel_size=2),
+                    
+                    nn.Conv2d(in_channels=32, out_channels=64, kernel_size=3, padding=1),
+                    nn.BatchNorm2d(64),
+                    nn.ReLU(),
+                    nn.MaxPool2d(kernel_size=2),
+                    
+                    nn.Flatten(),               
+                    nn.Dropout(drop_rate), # Using tuned dropout
+                    nn.Linear(64 * 7 * 7, 128),
+                    nn.ReLU(),
+                    nn.Linear(128, 10)          
+                )
+                
+                # 3. Setup Optimizer with loop's LR and WD
+                optimizer = torch.optim.Adam(model.parameters(), lr=lr, weight_decay=wd)
+                scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.5, patience=2)
+                criterion = nn.CrossEntropyLoss()
+                
+                current_val_acc = 0
+                
+                # 4. Short training loop
+                for epoch in range(tuning_epochs):
+                    model.train()
+                    for images, labels in train_loader:
+                        optimizer.zero_grad()
+                        output = model(images)
+                        loss = criterion(output, labels)
+                        loss.backward()
+                        optimizer.step()
+                    
+                    # Validation phase
+                    model.eval()
+                    val_loss = 0
+                    val_acc = 0
+                    with torch.no_grad():
+                        for val_images, val_labels in val_loader:
+                            val_output = model(val_images)
+                            val_loss += criterion(val_output, val_labels).item()
+                            val_acc += get_accuracy(val_output, val_labels)
+                    
+                    val_loss /= len(val_loader)
+                    val_acc /= len(val_loader)
+                    current_val_acc = val_acc 
+                    
+                    scheduler.step(val_loss)
+                
+                print(f"Result -> Final Val Accuracy: {current_val_acc:.4f}")
+                
+                # 5. Save the model if it beats the previous high score
+                if current_val_acc > best_val_acc:
+                    best_val_acc = current_val_acc
+                    best_params = {
+                        'lr': lr,
+                        'dropout': drop_rate, 
+                        'weight_decay': wd, 
+                        'kernel_size': k_size, 
+                        'padding': k_pad
+                    }
+                    best_model_state = copy.deepcopy(model.state_dict())
 
 print("\n======================================")
 print(f"🥇 TUNING COMPLETE! Best Accuracy: {best_val_acc:.4f}")
 print(f"🥇 Best Parameters: {best_params}")
 print("======================================")
 
-# 6. Rebuild the winning model architecture using the best parameters
+# 6. Rebuild the winning model architecture using the absolute best parameters
 final_tuned_model = nn.Sequential(
-    nn.Conv2d(in_channels=1, out_channels=32, kernel_size=5, padding=2), 
+    nn.Conv2d(in_channels=1, out_channels=32, kernel_size=best_params['kernel_size'], padding=best_params['padding']), 
     nn.BatchNorm2d(32),
     nn.ReLU(),
     nn.MaxPool2d(kernel_size=2),
+    
     nn.Conv2d(in_channels=32, out_channels=64, kernel_size=3, padding=1),
     nn.BatchNorm2d(64),
     nn.ReLU(),
     nn.MaxPool2d(kernel_size=2),
+    
     nn.Flatten(),               
-    nn.Dropout(best_params['dropout']), # Use the winning dropout
+    nn.Dropout(best_params['dropout']),
     nn.Linear(64 * 7 * 7, 128),
     nn.ReLU(),
     nn.Linear(128, 10)          
 )
 
-# 7. Load the winning "brain" (weights) into the model
-final_tuned_model.load_state_dict(best_model_state)
+# 7. Train the winning model for a FULL run to reach maximum potential
+print(f"\n*** TRAINING FINAL WINNING MODEL FOR 30 EPOCHS ***")
+final_optimizer = torch.optim.Adam(final_tuned_model.parameters(), lr=best_params['lr'], weight_decay=best_params['weight_decay'])
+final_scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(final_optimizer, mode='min', factor=0.5, patience=2)
+
+final_train_loss_hist, final_val_loss_hist = [], []
+final_train_acc_hist, final_val_acc_hist = [], []
+
+final_epochs = 30
+for epoch in range(final_epochs):
+    final_tuned_model.train()  
+    t_loss, t_acc = 0, 0
+    start_time = time.time()
+    
+    for images, labels in train_loader:
+        final_optimizer.zero_grad()
+        output = final_tuned_model(images)
+        loss = criterion(output, labels)
+        loss.backward()
+        final_optimizer.step()
+        
+        t_loss += loss.item()
+        t_acc += get_accuracy(output, labels)
+        
+    final_train_loss_hist.append(t_loss / len(train_loader))
+    final_train_acc_hist.append(t_acc / len(train_loader))
+
+    final_tuned_model.eval()  
+    with torch.no_grad():
+        v_loss, v_acc = 0, 0
+        for val_images, val_labels in val_loader:
+            val_output = final_tuned_model(val_images)
+            v_loss += criterion(val_output, val_labels).item()
+            v_acc += get_accuracy(val_output, val_labels)
+            
+        final_val_loss_hist.append(v_loss / len(val_loader))
+        final_val_acc_hist.append(v_acc / len(val_loader))
+        
+    final_scheduler.step(final_val_loss_hist[-1])
+    end_time = time.time()
+    print(f"Final Model Epoch {epoch+1:02d}/{final_epochs} ({end_time - start_time:.1f}s) | Train Acc: {final_train_acc_hist[-1]:.4f} | Val Acc: {final_val_acc_hist[-1]:.4f}")
+
+# 8. Plot the Final Winning Model's Learning Curves
+plt.figure(figsize=(6, 8))
+
+plt.subplot(2, 1, 1)
+plt.plot(final_train_loss_hist, label='Train Loss', color='k', alpha=0.6)
+plt.plot(final_val_loss_hist, label='Validation Loss', color='darkred', alpha=0.6)
+plt.xlabel('Epoch'); plt.ylabel('Loss'); plt.legend(frameon=False)
+plt.title(f"Final Model Loss (LR: {best_params['lr']}, Drop: {best_params['dropout']})")
+
+plt.subplot(2, 1, 2)
+plt.plot(final_train_acc_hist, label='Train Accuracy', color='k', alpha=0.6)
+plt.plot(final_val_acc_hist, label='Validation Accuracy', color='darkred', alpha=0.6)
+plt.xlabel('Epoch'); plt.ylabel('Accuracy'); plt.legend(frameon=False)
+plt.title(f"Final Model Accuracy (Ker: {best_params['kernel_size']}x{best_params['kernel_size']}, WD: {best_params['weight_decay']})")
+
+plt.tight_layout()
+plt.savefig("./ca1/img/ultimate_tuned_performance.png", bbox_inches='tight', dpi=300)
 
 #########################
 # CLASSIFICATION REPORT #
@@ -561,7 +628,6 @@ final_tuned_model.load_state_dict(best_model_state)
 print("\n***IMPLEMENT CLASSIFICATION REPORT***")
 from sklearn.metrics import classification_report
 
-# Test the fully tuned, absolute best model on the untouched test set
 final_tuned_model.eval()  
 test_loss = 0
 test_acc = 0
