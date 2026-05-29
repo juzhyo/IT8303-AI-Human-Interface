@@ -449,97 +449,106 @@ plt.savefig("./ca1/img/architecture_perfomance.png",bbox_inches='tight',dpi=300)
 #########################
 # HYPERPARAMETER TUNING #
 #########################
-print("\n***IMPLEMENT HYPERPARAMETER TUNING (Deep Grid Search)***")
+print("\n***IMPLEMENT HYPERPARAMETER TUNING (Deep Random Search)***")
 import copy
+import random
 
-# 1. Scaled-up Grid Search Parameters (2 x 4 x 3 x 2 = 48 combinations)
-starting_lrs = [0.001, 0.0005]
-dropout_rates = [0.3, 0.4, 0.5, 0.6]         
-weight_decays = [1e-3, 1e-4, 1e-5]       
-kernel_configs = [(5, 2), (3, 1)] 
+# 1. Expanded Parameter Space (Massive variety, zero extra time penalty)
+starting_lrs = [0.005, 0.001, 0.0005, 0.0001]
+dropout_rates = [0.3, 0.4, 0.5, 0.6, 0.7]         
+weight_decays = [1e-3, 1e-4, 1e-5, 0.0]  # 0.0 means testing NO weight decay
+kernel_configs = [(5, 2), (3, 1)]        # (kernel_size, padding)
+batch_sizes = [32, 64, 128]
+dense_units = [64, 128, 256]             # Size of the hidden linear layer
 
 best_val_acc = 0.0
 best_params = {}
 best_model_state = None  
 
-# 10 epochs per model. (48 models * 10 = 480 total epochs for this block)
-# Estimated time: ~4.5 to 5.5 hours on GitHub free-tier CPU runners.
 tuning_epochs = 10 
+num_random_trials = 35  # ~4 hours of tuning + 1 hour for the rest of the script = 5 hours
 
-for lr in starting_lrs:
-    for drop_rate in dropout_rates:
-        for wd in weight_decays:
-            for k_size, k_pad in kernel_configs:
-                print(f"\n--- Testing LR: {lr} | Drop: {drop_rate} | WD: {wd} | Kernel: {k_size}x{k_size} ---")
-                
-                # 2. Initialize a fresh model using the loop's specific kernel configuration
-                model = nn.Sequential(
-                    nn.Conv2d(in_channels=1, out_channels=32, kernel_size=k_size, padding=k_pad), 
-                    nn.BatchNorm2d(32),
-                    nn.ReLU(),
-                    nn.MaxPool2d(kernel_size=2),
-                    
-                    nn.Conv2d(in_channels=32, out_channels=64, kernel_size=3, padding=1),
-                    nn.BatchNorm2d(64),
-                    nn.ReLU(),
-                    nn.MaxPool2d(kernel_size=2),
-                    
-                    nn.Flatten(),               
-                    nn.Dropout(drop_rate), # Using tuned dropout
-                    nn.Linear(64 * 7 * 7, 128),
-                    nn.ReLU(),
-                    nn.Linear(128, 10)          
-                )
-                
-                # 3. Setup Optimizer with loop's LR and WD
-                optimizer = torch.optim.Adam(model.parameters(), lr=lr, weight_decay=wd)
-                scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.5, patience=2)
-                criterion = nn.CrossEntropyLoss()
-                
-                current_val_acc = 0
-                
-                # 4. Short training loop
-                for epoch in range(tuning_epochs):
-                    model.train()
-                    for images, labels in train_loader:
-                        optimizer.zero_grad()
-                        output = model(images)
-                        loss = criterion(output, labels)
-                        loss.backward()
-                        optimizer.step()
-                    
-                    # Validation phase
-                    model.eval()
-                    val_loss = 0
-                    val_acc = 0
-                    with torch.no_grad():
-                        for val_images, val_labels in val_loader:
-                            val_output = model(val_images)
-                            val_loss += criterion(val_output, val_labels).item()
-                            val_acc += get_accuracy(val_output, val_labels)
-                    
-                    val_loss /= len(val_loader)
-                    val_acc /= len(val_loader)
-                    current_val_acc = val_acc 
-                    
-                    scheduler.step(val_loss)
-                
-                print(f"Result -> Final Val Accuracy: {current_val_acc:.4f}")
-                
-                # 5. Save the model if it beats the previous high score
-                if current_val_acc > best_val_acc:
-                    best_val_acc = current_val_acc
-                    best_params = {
-                        'lr': lr,
-                        'dropout': drop_rate, 
-                        'weight_decay': wd, 
-                        'kernel_size': k_size, 
-                        'padding': k_pad
-                    }
-                    best_model_state = copy.deepcopy(model.state_dict())
+print(f"Starting Random Search: Testing {num_random_trials} combinations...\n")
 
-print("\n======================================")
-print(f"🥇 TUNING COMPLETE! Best Accuracy: {best_val_acc:.4f}")
+for trial in range(num_random_trials):
+    # Randomly pick parameters from our expanded buckets
+    lr = random.choice(starting_lrs)
+    drop_rate = random.choice(dropout_rates)
+    wd = random.choice(weight_decays)
+    k_size, k_pad = random.choice(kernel_configs)
+    b_size = random.choice(batch_sizes)
+    d_units = random.choice(dense_units)
+    
+    print(f"--- Trial {trial+1}/{num_random_trials} | LR: {lr} | Drop: {drop_rate} | WD: {wd} | Ker: {k_size} | Batch: {b_size} | Dense: {d_units} ---")
+    
+    # Rebuild DataLoaders for the dynamic batch size
+    tune_train_loader = DataLoader(train_data, batch_size=b_size, shuffle=True)
+    tune_val_loader = DataLoader(val_data, batch_size=b_size, shuffle=False)
+
+    # Initialize model with dynamic kernel and dense layer sizes
+    model = nn.Sequential(
+        nn.Conv2d(in_channels=1, out_channels=32, kernel_size=k_size, padding=k_pad), 
+        nn.BatchNorm2d(32),
+        nn.ReLU(),
+        nn.MaxPool2d(kernel_size=2),
+        
+        nn.Conv2d(in_channels=32, out_channels=64, kernel_size=3, padding=1),
+        nn.BatchNorm2d(64),
+        nn.ReLU(),
+        nn.MaxPool2d(kernel_size=2),
+        
+        nn.Flatten(),               
+        nn.Dropout(drop_rate), 
+        nn.Linear(64 * 7 * 7, d_units), # Dynamic hidden layer size
+        nn.ReLU(),
+        nn.Linear(d_units, 10)          # Output layer
+    )
+    
+    optimizer = torch.optim.Adam(model.parameters(), lr=lr, weight_decay=wd)
+    scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.5, patience=2)
+    criterion = nn.CrossEntropyLoss()
+    
+    current_val_acc = 0
+    
+    # Tuning loop
+    for epoch in range(tuning_epochs):
+        model.train()
+        for images, labels in tune_train_loader:
+            optimizer.zero_grad()
+            output = model(images)
+            loss = criterion(output, labels)
+            loss.backward()
+            optimizer.step()
+        
+        model.eval()
+        val_loss = 0
+        val_acc = 0
+        with torch.no_grad():
+            for val_images, val_labels in tune_val_loader:
+                val_output = model(val_images)
+                val_loss += criterion(val_output, val_labels).item()
+                val_acc += get_accuracy(val_output, val_labels)
+        
+        val_loss /= len(tune_val_loader)
+        val_acc /= len(tune_val_loader)
+        current_val_acc = val_acc 
+        
+        scheduler.step(val_loss)
+    
+    print(f"Result -> Final Val Accuracy: {current_val_acc:.4f}\n")
+    
+    # Save the model if it's the new champion
+    if current_val_acc > best_val_acc:
+        best_val_acc = current_val_acc
+        best_params = {
+            'lr': lr, 'dropout': drop_rate, 'weight_decay': wd, 
+            'kernel_size': k_size, 'padding': k_pad, 
+            'batch_size': b_size, 'dense_units': d_units
+        }
+        best_model_state = copy.deepcopy(model.state_dict())
+
+print("======================================")
+print(f"🥇 RANDOM SEARCH COMPLETE! Best Accuracy: {best_val_acc:.4f}")
 print(f"🥇 Best Parameters: {best_params}")
 print("======================================")
 
@@ -557,10 +566,17 @@ final_tuned_model = nn.Sequential(
     
     nn.Flatten(),               
     nn.Dropout(best_params['dropout']),
-    nn.Linear(64 * 7 * 7, 128),
+    
+    # BUG 1 FIXED: Use the winning dense units!
+    nn.Linear(64 * 7 * 7, best_params['dense_units']), 
     nn.ReLU(),
-    nn.Linear(128, 10)          
+    nn.Linear(best_params['dense_units'], 10)          
 )
+
+# BUG 2 FIXED: Rebuild the data loaders using the winning batch size!
+final_train_loader = DataLoader(train_data, batch_size=best_params['batch_size'], shuffle=True)
+final_val_loader = DataLoader(val_data, batch_size=best_params['batch_size'], shuffle=False)
+final_test_loader = DataLoader(test_data, batch_size=best_params['batch_size'], shuffle=False)
 
 # 7. Train the winning model for a FULL run to reach maximum potential
 print(f"\n*** TRAINING FINAL WINNING MODEL FOR 30 EPOCHS ***")
@@ -576,7 +592,7 @@ for epoch in range(final_epochs):
     t_loss, t_acc = 0, 0
     start_time = time.time()
     
-    for images, labels in train_loader:
+    for images, labels in final_train_loader:
         final_optimizer.zero_grad()
         output = final_tuned_model(images)
         loss = criterion(output, labels)
@@ -586,19 +602,19 @@ for epoch in range(final_epochs):
         t_loss += loss.item()
         t_acc += get_accuracy(output, labels)
         
-    final_train_loss_hist.append(t_loss / len(train_loader))
-    final_train_acc_hist.append(t_acc / len(train_loader))
+    final_train_loss_hist.append(t_loss / len(final_train_loader))
+    final_train_acc_hist.append(t_acc / len(final_train_loader))
 
     final_tuned_model.eval()  
     with torch.no_grad():
         v_loss, v_acc = 0, 0
-        for val_images, val_labels in val_loader:
+        for val_images, val_labels in final_val_loader:
             val_output = final_tuned_model(val_images)
             v_loss += criterion(val_output, val_labels).item()
             v_acc += get_accuracy(val_output, val_labels)
             
-        final_val_loss_hist.append(v_loss / len(val_loader))
-        final_val_acc_hist.append(v_acc / len(val_loader))
+        final_val_loss_hist.append(v_loss / len(final_val_loader))
+        final_val_acc_hist.append(v_acc / len(final_val_loader))
         
     final_scheduler.step(final_val_loss_hist[-1])
     end_time = time.time()
@@ -620,7 +636,7 @@ plt.xlabel('Epoch'); plt.ylabel('Accuracy'); plt.legend(frameon=False)
 plt.title(f"Final Model Accuracy (Ker: {best_params['kernel_size']}x{best_params['kernel_size']}, WD: {best_params['weight_decay']})")
 
 plt.tight_layout()
-plt.savefig("./ca1/img/ultimate_tuned_performance.png", bbox_inches='tight', dpi=300)
+plt.savefig("./ca1/img/final_performance.png", bbox_inches='tight', dpi=300)
 
 #########################
 # CLASSIFICATION REPORT #
@@ -636,7 +652,7 @@ all_predictions = []
 all_true_labels = []
 
 with torch.no_grad():
-    for test_images, test_labels in test_loader:
+    for test_images, test_labels in final_test_loader:
         test_output = final_tuned_model(test_images)
         test_loss += criterion(test_output, test_labels).item()
         test_acc += get_accuracy(test_output, test_labels)
@@ -646,7 +662,10 @@ with torch.no_grad():
         all_predictions.extend(predictions.cpu().numpy())
         all_true_labels.extend(test_labels.cpu().numpy())
 
-print(f"Final Test Loss: {test_loss / len(test_loader):.4f}, Final Test Acc: {test_acc / len(test_loader):.4f}\n")
+final_test_loss = test_loss / len(final_test_loader)
+final_test_acc = test_acc / len(final_test_loader)
+
+print(f"Final Test Loss: {final_test_loss:.4f}, Final Test Acc: {final_test_acc:.4f}\n")
 
 fashion_mnist_classes = [
     "T-shirt/top", "Trouser", "Pullover", "Dress", "Coat", 
@@ -656,6 +675,17 @@ fashion_mnist_classes = [
 print("======================================")
 print("     FINAL TEST SET EVALUATION        ")
 print("======================================")
-print(classification_report(all_true_labels, all_predictions, target_names=fashion_mnist_classes))
+report_str = classification_report(all_true_labels, all_predictions, target_names=fashion_mnist_classes)
+print(report_str)
 
-print("\n✅ Script execution completely finished!")
+# 9. Save all results to a text file so nothing gets lost in the GitHub runner logs!
+with open('./ca1/data/tuning_results.txt', 'w') as file:
+    file.write("=== BEST HYPERPARAMETERS ===\n")
+    for key, value in best_params.items():
+        file.write(f"{key}: {value}\n")
+    file.write(f"\nFinal Test Loss: {final_test_loss:.4f}\n")
+    file.write(f"Final Test Accuracy: {final_test_acc:.4f}\n\n")
+    file.write("=== CLASSIFICATION REPORT ===\n")
+    file.write(report_str)
+
+print("\n✅ Script execution completely finished! Results saved to ./ca1/data/tuning_results.txt")
