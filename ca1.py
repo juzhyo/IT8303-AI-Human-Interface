@@ -449,7 +449,7 @@ plt.savefig("./ca1/img/architecture_perfomance.png",bbox_inches='tight',dpi=300)
 #########################
 # HYPERPARAMETER TUNING #
 #########################
-print("\n***IMPLEMENT HYPERPARAMETER TUNING (Deep Random Search)***")
+print("\n***IMPLEMENT HYPERPARAMETER TUNING***")
 import copy
 import random
 
@@ -466,7 +466,7 @@ best_params = {}
 best_model_state = None  
 
 tuning_epochs = 10 
-num_random_trials = 35  # ~4 hours of tuning + 1 hour for the rest of the script = 5 hours
+num_random_trials = 80  # ~4 hours of tuning + 1 hour for the rest of the script = 5 hours
 
 print(f"Starting Random Search: Testing {num_random_trials} combinations...\n")
 
@@ -573,7 +573,6 @@ final_tuned_model = nn.Sequential(
     nn.Linear(best_params['dense_units'], 10)          
 )
 
-# BUG 2 FIXED: Rebuild the data loaders using the winning batch size!
 final_train_loader = DataLoader(train_data, batch_size=best_params['batch_size'], shuffle=True)
 final_val_loader = DataLoader(val_data, batch_size=best_params['batch_size'], shuffle=False)
 final_test_loader = DataLoader(test_data, batch_size=best_params['batch_size'], shuffle=False)
@@ -641,8 +640,8 @@ plt.savefig("./ca1/img/final_performance.png", bbox_inches='tight', dpi=300)
 #########################
 # CLASSIFICATION REPORT #
 #########################
-print("\n***IMPLEMENT CLASSIFICATION REPORT***")
-from sklearn.metrics import classification_report
+print("\n***CLASSIFICATION REPORT***")
+from sklearn.metrics import classification_report, confusion_matrix, ConfusionMatrixDisplay
 
 final_tuned_model.eval()  
 test_loss = 0
@@ -675,10 +674,26 @@ fashion_mnist_classes = [
 print("======================================")
 print("     FINAL TEST SET EVALUATION        ")
 print("======================================")
+
+# 1. Generate and print the Classification Report
 report_str = classification_report(all_true_labels, all_predictions, target_names=fashion_mnist_classes)
 print(report_str)
 
-# 9. Save all results to a text file so nothing gets lost in the GitHub runner logs!
+# 2. Plot and save the Confusion Matrix
+print("\nGenerating Confusion Matrix...")
+cm = confusion_matrix(all_true_labels, all_predictions)
+disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=fashion_mnist_classes)
+
+# Create a figure large enough to cleanly display the labels
+fig, ax = plt.subplots(figsize=(10, 8))
+disp.plot(cmap=plt.cm.Blues, ax=ax, xticks_rotation=45)
+
+plt.title('Final Model Confusion Matrix')
+plt.tight_layout()
+plt.savefig("./ca1/img/confusion_matrix.png", bbox_inches='tight', dpi=300)
+plt.close()
+
+# 3. Save all text results to the tuning_results.txt file
 with open('./ca1/data/tuning_results.txt', 'w') as file:
     file.write("=== BEST HYPERPARAMETERS ===\n")
     for key, value in best_params.items():
@@ -687,5 +702,3 @@ with open('./ca1/data/tuning_results.txt', 'w') as file:
     file.write(f"Final Test Accuracy: {final_test_acc:.4f}\n\n")
     file.write("=== CLASSIFICATION REPORT ===\n")
     file.write(report_str)
-
-print("\n✅ Script execution completely finished! Results saved to ./ca1/data/tuning_results.txt")
