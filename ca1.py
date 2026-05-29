@@ -21,7 +21,7 @@ print(f"Calculated Std Dev: {std:.4f}\n")
 # Define the transform to convert images to PyTorch tensors
 transform = transforms.Compose([
     transforms.ToTensor(),
-    transforms.Normalize((mean.item(),), (std.item(),)) # Standard MNIST normalization
+    transforms.Normalize((mean.item(),), (std.item(),))
 ])
 
 # Split into training and validation sets
@@ -37,22 +37,21 @@ test_data = datasets.FashionMNIST(root='./ca1/data', train=False, download=True,
 test_loader = DataLoader(test_data, batch_size=64, shuffle=False)
 test_size = len(test_data)
 
-print(f'NUMBER OF DATASET IMAGES')
+print(f'***NUMBER OF DATASET IMAGES***')
 print(f'Training:   {train_size}')
 print(f'Validation: {val_size}')
-print(f'Test:       {test_size}\n')
-print(f'Total:      {train_size+val_size+test_size}')
+print(f'Test:       {test_size}')
+print(f'Total:      {train_size+val_size+test_size}\n')
 
 # Sample 20 training images
 sample_indices = range(20)
 sample_images, sample_labels = zip(*[train_data[i] for i in sample_indices])
 
-# Visualize the 10 sample images in a 2x5 grid
+# Visualize the 20 sample images
 plt.figure(figsize=(4, 6))
 for i in range(20):
     plt.subplot(5, 4, i + 1)
     plt.imshow(sample_images[i].squeeze(), cmap='gray')
-    # plt.title(f'Label: {sample_labels[i]}')
     plt.axis('off')
 plt.savefig('./ca1/img/samples.png',bbox_inches='tight',dpi=300)
 
@@ -83,7 +82,6 @@ cnn_model = nn.Sequential(
 )
 
 # Train CNN model
-cnn_model.train()  # Set model to training mode
 optimizer = torch.optim.Adam(cnn_model.parameters(), lr=0.001)
 criterion = nn.CrossEntropyLoss()
 
@@ -96,7 +94,7 @@ cnn_val_acc_history = []
 # Train the model for a few epochs
 epochs = 10
 for epoch in range(epochs):
-    cnn_model.train()  # IMPORTANT: Set model to training mode at the start of each epoch
+    cnn_model.train()
     train_loss = 0
     train_acc = 0
     start_time = time.time()
@@ -118,7 +116,7 @@ for epoch in range(epochs):
     cnn_train_acc_history.append(train_acc / len(train_loader))
 
     # Validate the model
-    cnn_model.eval()  # IMPORTANT: Set to evaluation mode to disable Dropout during validation
+    cnn_model.eval()
     with torch.no_grad():
         val_loss = 0
         val_acc = 0
@@ -174,39 +172,29 @@ plt.savefig("./ca1/img/baseline_perfomance.png",bbox_inches='tight',dpi=300)
 print("***IMPLEMENT DATA AUGMENTATION***")
 
 train_transform = transforms.Compose([
-    transforms.RandomHorizontalFlip(p=0.5),      # 50% chance to flip horizontally
-    transforms.RandomRotation(degrees=10),       # Rotate by up to +/- 10 degrees
+    transforms.RandomHorizontalFlip(p=0.5),      
+    transforms.RandomRotation(degrees=10),       
     transforms.ToTensor(),
     transforms.Normalize((mean.item(),), (std.item(),))
 ])
 
-# Val/Test transform ONLY gets tensor conversion and normalization
 test_transform = transforms.Compose([
     transforms.ToTensor(),
     transforms.Normalize((mean.item(),), (std.item(),))
 ])
 
-# 2. Load the dataset twice with the different transforms
 train_data_full = datasets.FashionMNIST(root='./ca1/data', train=True, download=True, transform=train_transform)
 val_data_full = datasets.FashionMNIST(root='./ca1/data', train=True, download=True, transform=test_transform)
 
-# 3. Calculate sizes and generate fixed random indices
-train_size = int(0.8 * len(train_data_full))
+train_size = int(0.8*len(train_data_full))
 val_size = len(train_data_full) - train_size
 
-# We use randperm to generate a shuffled list of indices, locked by our generator
-split_generator = torch.Generator().manual_seed(42)
-indices = torch.randperm(len(train_data_full), generator=split_generator).tolist()
-
-# 4. Create the final datasets using Subsets
 train_data = torch.utils.data.Subset(train_data_full, indices[:train_size])
 val_data = torch.utils.data.Subset(val_data_full, indices[train_size:])
 
-# 5. Create DataLoaders
 train_loader = DataLoader(train_data, batch_size=64, shuffle=True)
 val_loader = DataLoader(val_data, batch_size=64, shuffle=False)
 
-# Load test data (using test_transform)
 test_data = datasets.FashionMNIST(root='./ca1/data', train=False, download=True, transform=test_transform)
 test_loader = DataLoader(test_data, batch_size=64, shuffle=False)
 
@@ -226,7 +214,6 @@ cnn_model = nn.Sequential(
 )
 
 # Train CNN model
-cnn_model.train()  # Set model to training mode
 optimizer = torch.optim.Adam(cnn_model.parameters(), lr=0.001)
 criterion = nn.CrossEntropyLoss()
 
@@ -336,7 +323,7 @@ train_size = int(0.8 * len(train_data_full))
 val_size = len(train_data_full) - train_size
 
 # We use randperm to generate a shuffled list of indices, locked by our generator
-split_generator = torch.Generator().manual_seed(42)
+split_generator = torch.Generator().manual_seed(17)
 indices = torch.randperm(len(train_data_full), generator=split_generator).tolist()
 
 # 4. Create the final datasets using Subsets
