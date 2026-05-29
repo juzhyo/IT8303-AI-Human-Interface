@@ -8,17 +8,99 @@ Test:       10000
 Total:      70000
 
 ***IMPLEMENT BASELINE CNN MODEL***
-Epoch 1 done in 18.03 seconds. Train Loss: 0.4343, Train Acc: 0.8420, Val Loss: 0.3312, Val Acc: 0.8812
-Epoch 2 done in 17.26 seconds. Train Loss: 0.3026, Train Acc: 0.8920, Val Loss: 0.2878, Val Acc: 0.8946
-Epoch 3 done in 18.69 seconds. Train Loss: 0.2589, Train Acc: 0.9048, Val Loss: 0.2761, Val Acc: 0.9013
-Epoch 4 done in 18.71 seconds. Train Loss: 0.2281, Train Acc: 0.9157, Val Loss: 0.2688, Val Acc: 0.9024
-Epoch 5 done in 18.55 seconds. Train Loss: 0.2029, Train Acc: 0.9247, Val Loss: 0.2528, Val Acc: 0.9113
-Epoch 6 done in 18.83 seconds. Train Loss: 0.1839, Train Acc: 0.9313, Val Loss: 0.2486, Val Acc: 0.9102
-Epoch 7 done in 18.38 seconds. Train Loss: 0.1632, Train Acc: 0.9393, Val Loss: 0.2684, Val Acc: 0.9097
-Epoch 8 done in 18.43 seconds. Train Loss: 0.1485, Train Acc: 0.9437, Val Loss: 0.2537, Val Acc: 0.9177
-Epoch 9 done in 16.68 seconds. Train Loss: 0.1345, Train Acc: 0.9483, Val Loss: 0.2580, Val Acc: 0.9118
-Epoch 10 done in 18.42 seconds. Train Loss: 0.1207, Train Acc: 0.9534, Val Loss: 0.2551, Val Acc: 0.9160
+Epoch 1 done in 17.73 seconds. Train Loss: 0.4223, Train Acc: 0.8477, Val Loss: 0.3490, Val Acc: 0.8731
+Epoch 2 done in 17.88 seconds. Train Loss: 0.2989, Train Acc: 0.8901, Val Loss: 0.2734, Val Acc: 0.9026
+Epoch 3 done in 17.94 seconds. Train Loss: 0.2544, Train Acc: 0.9064, Val Loss: 0.2836, Val Acc: 0.9034
+Epoch 4 done in 18.02 seconds. Train Loss: 0.2267, Train Acc: 0.9154, Val Loss: 0.2427, Val Acc: 0.9140
+Epoch 5 done in 17.86 seconds. Train Loss: 0.1999, Train Acc: 0.9254, Val Loss: 0.2596, Val Acc: 0.9089
+Epoch 6 done in 17.83 seconds. Train Loss: 0.1787, Train Acc: 0.9334, Val Loss: 0.2469, Val Acc: 0.9138
+Epoch 7 done in 17.78 seconds. Train Loss: 0.1609, Train Acc: 0.9395, Val Loss: 0.2550, Val Acc: 0.9132
+Epoch 8 done in 17.59 seconds. Train Loss: 0.1456, Train Acc: 0.9454, Val Loss: 0.2549, Val Acc: 0.9152
+Epoch 9 done in 17.84 seconds. Train Loss: 0.1311, Train Acc: 0.9496, Val Loss: 0.2641, Val Acc: 0.9148
+Epoch 10 done in 17.64 seconds. Train Loss: 0.1186, Train Acc: 0.9563, Val Loss: 0.2561, Val Acc: 0.9195
 
-Test Loss: 0.2757, Test Acc: 0.9125
+Test Loss: 0.2770, Test Acc: 0.9146
 
 ***IMPLEMENT DATA AUGMENTATION***
+Epoch 1 done in 21.36 seconds. Train Loss: 0.5061, Train Acc: 0.8155, Val Loss: 0.3699, Val Acc: 0.8680
+Epoch 2 done in 21.11 seconds. Train Loss: 0.3737, Train Acc: 0.8629, Val Loss: 0.3440, Val Acc: 0.8756
+Epoch 3 done in 21.12 seconds. Train Loss: 0.3345, Train Acc: 0.8762, Val Loss: 0.2970, Val Acc: 0.8955
+Epoch 4 done in 21.05 seconds. Train Loss: 0.3098, Train Acc: 0.8855, Val Loss: 0.2835, Val Acc: 0.8965
+Epoch 5 done in 20.92 seconds. Train Loss: 0.2938, Train Acc: 0.8916, Val Loss: 0.2927, Val Acc: 0.8965
+Epoch 6 done in 20.90 seconds. Train Loss: 0.2804, Train Acc: 0.8955, Val Loss: 0.2803, Val Acc: 0.8980
+Epoch 7 done in 20.87 seconds. Train Loss: 0.2678, Train Acc: 0.8994, Val Loss: 0.2695, Val Acc: 0.9032
+Epoch 8 done in 20.81 seconds. Train Loss: 0.2590, Train Acc: 0.9031, Val Loss: 0.2604, Val Acc: 0.9097
+Epoch 9 done in 20.84 seconds. Train Loss: 0.2518, Train Acc: 0.9052, Val Loss: 0.2665, Val Acc: 0.9083
+Epoch 10 done in 20.90 seconds. Train Loss: 0.2453, Train Acc: 0.9089, Val Loss: 0.2571, Val Acc: 0.9094
+
+Test Loss: 0.2741, Test Acc: 0.9009
+
+***IMPLEMENT MODEL IMPROVEMENTS***
+Epoch 1 done in 35.70 seconds. Train Loss: 0.5291, Train Acc: 0.8071, Val Loss: 0.3572, Val Acc: 0.8698
+Epoch 2 done in 35.36 seconds. Train Loss: 0.3856, Train Acc: 0.8570, Val Loss: 0.3206, Val Acc: 0.8827
+Epoch 3 done in 35.36 seconds. Train Loss: 0.3473, Train Acc: 0.8721, Val Loss: 0.2949, Val Acc: 0.8900
+Epoch 4 done in 35.12 seconds. Train Loss: 0.3228, Train Acc: 0.8798, Val Loss: 0.2872, Val Acc: 0.8916
+Epoch 5 done in 35.03 seconds. Train Loss: 0.3068, Train Acc: 0.8854, Val Loss: 0.2736, Val Acc: 0.8977
+Epoch 6 done in 35.25 seconds. Train Loss: 0.2943, Train Acc: 0.8904, Val Loss: 0.2571, Val Acc: 0.9064
+Epoch 7 done in 35.38 seconds. Train Loss: 0.2822, Train Acc: 0.8951, Val Loss: 0.2655, Val Acc: 0.8999
+Epoch 8 done in 35.01 seconds. Train Loss: 0.2750, Train Acc: 0.8973, Val Loss: 0.2566, Val Acc: 0.9041
+Epoch 9 done in 34.79 seconds. Train Loss: 0.2692, Train Acc: 0.8993, Val Loss: 0.2571, Val Acc: 0.9052
+Epoch 10 done in 34.77 seconds. Train Loss: 0.2559, Train Acc: 0.9057, Val Loss: 0.2557, Val Acc: 0.9041
+Epoch 11 done in 34.85 seconds. Train Loss: 0.2523, Train Acc: 0.9061, Val Loss: 0.2409, Val Acc: 0.9090
+Epoch 12 done in 34.55 seconds. Train Loss: 0.2509, Train Acc: 0.9069, Val Loss: 0.2341, Val Acc: 0.9124
+Epoch 13 done in 34.30 seconds. Train Loss: 0.2432, Train Acc: 0.9081, Val Loss: 0.2222, Val Acc: 0.9173
+Epoch 14 done in 34.33 seconds. Train Loss: 0.2381, Train Acc: 0.9093, Val Loss: 0.2337, Val Acc: 0.9157
+Epoch 15 done in 34.46 seconds. Train Loss: 0.2349, Train Acc: 0.9123, Val Loss: 0.2322, Val Acc: 0.9133
+Epoch 16 done in 34.40 seconds. Train Loss: 0.2257, Train Acc: 0.9157, Val Loss: 0.2236, Val Acc: 0.9189
+Epoch 17 done in 34.62 seconds. Train Loss: 0.2258, Train Acc: 0.9156, Val Loss: 0.2165, Val Acc: 0.9199
+Epoch 18 done in 34.67 seconds. Train Loss: 0.2210, Train Acc: 0.9167, Val Loss: 0.2141, Val Acc: 0.9237
+Epoch 19 done in 34.55 seconds. Train Loss: 0.2222, Train Acc: 0.9170, Val Loss: 0.2101, Val Acc: 0.9199
+Epoch 20 done in 34.64 seconds. Train Loss: 0.2127, Train Acc: 0.9201, Val Loss: 0.2156, Val Acc: 0.9215
+
+Test Loss: 0.2266, Test Acc: 0.9184
+
+
+***IMPLEMENT HYPERPARAMETER TUNING (Grid Search + LR Scheduler)***
+
+--- Testing Dropout: 0.4 | Weight Decay: 0.0001 ---
+Result -> Final Val Accuracy: 0.9094
+
+--- Testing Dropout: 0.4 | Weight Decay: 1e-05 ---
+Result -> Final Val Accuracy: 0.9040
+
+--- Testing Dropout: 0.6 | Weight Decay: 0.0001 ---
+Result -> Final Val Accuracy: 0.9050
+
+--- Testing Dropout: 0.6 | Weight Decay: 1e-05 ---
+Result -> Final Val Accuracy: 0.9011
+
+======================================
+🥇 TUNING COMPLETE! Best Accuracy: 0.9094
+🥇 Best Parameters: {'dropout': 0.4, 'weight_decay': 0.0001}
+======================================
+
+***IMPLEMENT CLASSIFICATION REPORT***
+Final Test Loss: 0.2631, Final Test Acc: 0.9004
+
+======================================
+     FINAL TEST SET EVALUATION        
+======================================
+              precision    recall  f1-score   support
+
+ T-shirt/top       0.81      0.90      0.85      1000
+     Trouser       0.98      0.98      0.98      1000
+    Pullover       0.80      0.91      0.85      1000
+       Dress       0.92      0.89      0.91      1000
+        Coat       0.86      0.78      0.82      1000
+      Sandal       0.98      0.98      0.98      1000
+       Shirt       0.77      0.68      0.72      1000
+     Sneaker       0.96      0.94      0.95      1000
+         Bag       0.98      0.98      0.98      1000
+  Ankle boot       0.95      0.97      0.96      1000
+
+    accuracy                           0.90     10000
+   macro avg       0.90      0.90      0.90     10000
+weighted avg       0.90      0.90      0.90     10000
+
+
+✅ Script execution completely finished!
