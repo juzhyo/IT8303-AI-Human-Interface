@@ -466,7 +466,7 @@ best_val_acc = 0.0
 best_params = {}
 
 tuning_epochs = 10 
-num_random_trials = 60 
+num_random_trials = 50 
 
 print(f"Starting Random Search: Testing {num_random_trials} combinations...\n")
 
