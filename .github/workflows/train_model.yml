@@ -37,12 +37,13 @@ jobs:
     - name: Commit and Push results
       if: always() 
       run: |
-        # Tell Git who is making the commit
         git config --global user.name 'github-actions[bot]'
         git config --global user.email 'github-actions[bot]@users.noreply.github.com'
         
-        # FIXED: Use *_output_log.txt to catch the timestamped file!
+        # ADD THIS LINE: Create a blank file just in case Python crashes!
+        touch ./ca1/data/tuning_results.txt
+        
+        # Now Git will always find the file, even if it is empty
         git add *_output_log.txt ./ca1/img/ ./ca1/data/tuning_results.txt
         
-        # Check if there are actually changes, then commit and push
         git diff --quiet && git diff --staged --quiet || (git commit -m "Auto-save training results" && git push)
