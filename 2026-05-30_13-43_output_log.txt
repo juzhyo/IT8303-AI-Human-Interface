@@ -1,0 +1,247 @@
+Calculated Mean: 0.2860
+Calculated Std Dev: 0.3530
+
+***NUMBER OF DATASET IMAGES***
+Training:   48000
+Validation: 12000
+Test:       10000
+Total:      70000
+
+***IMPLEMENT BASELINE CNN MODEL***
+Epoch 1 done in 17.79 seconds. Train Loss: 0.4293, Train Acc: 0.8464, Val Loss: 0.3316, Val Acc: 0.8818
+Epoch 2 done in 17.45 seconds. Train Loss: 0.3008, Train Acc: 0.8902, Val Loss: 0.2905, Val Acc: 0.8945
+Epoch 3 done in 17.39 seconds. Train Loss: 0.2579, Train Acc: 0.9051, Val Loss: 0.2608, Val Acc: 0.9048
+Epoch 4 done in 17.24 seconds. Train Loss: 0.2246, Train Acc: 0.9165, Val Loss: 0.2604, Val Acc: 0.9078
+Epoch 5 done in 17.22 seconds. Train Loss: 0.2041, Train Acc: 0.9237, Val Loss: 0.2585, Val Acc: 0.9092
+Epoch 6 done in 17.20 seconds. Train Loss: 0.1824, Train Acc: 0.9322, Val Loss: 0.2525, Val Acc: 0.9128
+Epoch 7 done in 17.05 seconds. Train Loss: 0.1613, Train Acc: 0.9394, Val Loss: 0.2593, Val Acc: 0.9116
+Epoch 8 done in 17.13 seconds. Train Loss: 0.1456, Train Acc: 0.9459, Val Loss: 0.2592, Val Acc: 0.9128
+Epoch 9 done in 17.10 seconds. Train Loss: 0.1339, Train Acc: 0.9497, Val Loss: 0.2581, Val Acc: 0.9136
+Epoch 10 done in 17.01 seconds. Train Loss: 0.1183, Train Acc: 0.9543, Val Loss: 0.2567, Val Acc: 0.9164
+
+Test Loss: 0.2799, Test Acc: 0.9137
+
+***IMPLEMENT DATA AUGMENTATION***
+Epoch 1 done in 21.29 seconds. Train Loss: 0.5070, Train Acc: 0.8169, Val Loss: 0.3709, Val Acc: 0.8676
+Epoch 2 done in 21.10 seconds. Train Loss: 0.3719, Train Acc: 0.8643, Val Loss: 0.3286, Val Acc: 0.8815
+Epoch 3 done in 21.00 seconds. Train Loss: 0.3347, Train Acc: 0.8771, Val Loss: 0.2995, Val Acc: 0.8902
+Epoch 4 done in 20.98 seconds. Train Loss: 0.3118, Train Acc: 0.8829, Val Loss: 0.2879, Val Acc: 0.8971
+Epoch 5 done in 20.91 seconds. Train Loss: 0.2937, Train Acc: 0.8917, Val Loss: 0.2890, Val Acc: 0.8990
+Epoch 6 done in 20.76 seconds. Train Loss: 0.2824, Train Acc: 0.8959, Val Loss: 0.2741, Val Acc: 0.9013
+Epoch 7 done in 20.75 seconds. Train Loss: 0.2700, Train Acc: 0.8997, Val Loss: 0.2695, Val Acc: 0.9014
+Epoch 8 done in 20.66 seconds. Train Loss: 0.2611, Train Acc: 0.9016, Val Loss: 0.2653, Val Acc: 0.9042
+Epoch 9 done in 20.70 seconds. Train Loss: 0.2507, Train Acc: 0.9075, Val Loss: 0.2657, Val Acc: 0.9048
+Epoch 10 done in 20.61 seconds. Train Loss: 0.2445, Train Acc: 0.9085, Val Loss: 0.2580, Val Acc: 0.9086
+Epoch 11 done in 20.73 seconds. Train Loss: 0.2374, Train Acc: 0.9108, Val Loss: 0.2763, Val Acc: 0.9012
+Epoch 12 done in 20.68 seconds. Train Loss: 0.2313, Train Acc: 0.9137, Val Loss: 0.2576, Val Acc: 0.9105
+Epoch 13 done in 20.68 seconds. Train Loss: 0.2259, Train Acc: 0.9153, Val Loss: 0.2564, Val Acc: 0.9161
+Epoch 14 done in 20.51 seconds. Train Loss: 0.2241, Train Acc: 0.9155, Val Loss: 0.2554, Val Acc: 0.9117
+Epoch 15 done in 20.58 seconds. Train Loss: 0.2177, Train Acc: 0.9193, Val Loss: 0.2565, Val Acc: 0.9110
+
+Test Loss: 0.2712, Test Acc: 0.9061
+
+***IMPLEMENT ARCHITECTURAL UPGRADES***
+Epoch 1 done in 34.61 seconds. Train Loss: 0.5143, Train Acc: 0.8112, Val Loss: 0.3539, Val Acc: 0.8678
+Epoch 2 done in 34.86 seconds. Train Loss: 0.3871, Train Acc: 0.8552, Val Loss: 0.3095, Val Acc: 0.8869
+Epoch 3 done in 34.71 seconds. Train Loss: 0.3490, Train Acc: 0.8708, Val Loss: 0.2966, Val Acc: 0.8900
+Epoch 4 done in 34.75 seconds. Train Loss: 0.3254, Train Acc: 0.8796, Val Loss: 0.2839, Val Acc: 0.8920
+Epoch 5 done in 34.57 seconds. Train Loss: 0.3103, Train Acc: 0.8846, Val Loss: 0.2746, Val Acc: 0.8957
+Epoch 6 done in 34.40 seconds. Train Loss: 0.2981, Train Acc: 0.8891, Val Loss: 0.2650, Val Acc: 0.9028
+Epoch 7 done in 34.49 seconds. Train Loss: 0.2840, Train Acc: 0.8937, Val Loss: 0.2522, Val Acc: 0.9059
+Epoch 8 done in 34.27 seconds. Train Loss: 0.2757, Train Acc: 0.8971, Val Loss: 0.2446, Val Acc: 0.9088
+Epoch 9 done in 34.41 seconds. Train Loss: 0.2660, Train Acc: 0.9002, Val Loss: 0.2422, Val Acc: 0.9085
+Epoch 10 done in 34.15 seconds. Train Loss: 0.2592, Train Acc: 0.9035, Val Loss: 0.2449, Val Acc: 0.9103
+Epoch 11 done in 34.26 seconds. Train Loss: 0.2520, Train Acc: 0.9050, Val Loss: 0.2278, Val Acc: 0.9147
+Epoch 12 done in 34.49 seconds. Train Loss: 0.2438, Train Acc: 0.9085, Val Loss: 0.2330, Val Acc: 0.9134
+Epoch 13 done in 34.39 seconds. Train Loss: 0.2406, Train Acc: 0.9097, Val Loss: 0.2353, Val Acc: 0.9137
+Epoch 14 done in 34.39 seconds. Train Loss: 0.2372, Train Acc: 0.9115, Val Loss: 0.2185, Val Acc: 0.9218
+Epoch 15 done in 34.64 seconds. Train Loss: 0.2316, Train Acc: 0.9130, Val Loss: 0.2154, Val Acc: 0.9220
+Epoch 16 done in 34.75 seconds. Train Loss: 0.2314, Train Acc: 0.9134, Val Loss: 0.2163, Val Acc: 0.9224
+Epoch 17 done in 34.86 seconds. Train Loss: 0.2242, Train Acc: 0.9143, Val Loss: 0.2109, Val Acc: 0.9238
+Epoch 18 done in 34.55 seconds. Train Loss: 0.2214, Train Acc: 0.9173, Val Loss: 0.2054, Val Acc: 0.9269
+Epoch 19 done in 34.47 seconds. Train Loss: 0.2190, Train Acc: 0.9176, Val Loss: 0.2128, Val Acc: 0.9228
+Epoch 20 done in 34.69 seconds. Train Loss: 0.2138, Train Acc: 0.9199, Val Loss: 0.2188, Val Acc: 0.9210
+Epoch 21 done in 34.62 seconds. Train Loss: 0.2129, Train Acc: 0.9189, Val Loss: 0.2248, Val Acc: 0.9190
+Epoch 22 done in 34.53 seconds. Train Loss: 0.2130, Train Acc: 0.9192, Val Loss: 0.2065, Val Acc: 0.9254
+Epoch 23 done in 34.28 seconds. Train Loss: 0.2062, Train Acc: 0.9233, Val Loss: 0.2071, Val Acc: 0.9240
+Epoch 24 done in 34.28 seconds. Train Loss: 0.2054, Train Acc: 0.9223, Val Loss: 0.2112, Val Acc: 0.9217
+Epoch 25 done in 34.45 seconds. Train Loss: 0.2005, Train Acc: 0.9246, Val Loss: 0.2059, Val Acc: 0.9257
+Epoch 26 done in 34.30 seconds. Train Loss: 0.2004, Train Acc: 0.9238, Val Loss: 0.2029, Val Acc: 0.9275
+Epoch 27 done in 33.78 seconds. Train Loss: 0.1972, Train Acc: 0.9263, Val Loss: 0.2019, Val Acc: 0.9274
+Epoch 28 done in 34.41 seconds. Train Loss: 0.1960, Train Acc: 0.9258, Val Loss: 0.2054, Val Acc: 0.9254
+Epoch 29 done in 34.98 seconds. Train Loss: 0.1937, Train Acc: 0.9276, Val Loss: 0.2016, Val Acc: 0.9289
+Epoch 30 done in 34.66 seconds. Train Loss: 0.1902, Train Acc: 0.9280, Val Loss: 0.1948, Val Acc: 0.9302
+
+Test Loss: 0.2117, Test Acc: 0.9251
+
+
+***IMPLEMENT HYPERPARAMETER TUNING***
+Starting Random Search: Testing 35 combinations...
+
+--- Trial 01/35 | Layers: 2 | LR: 0.001 | Drop: 0.4 | Ker: 5 | Batch: 64 | Dense: 64 ---
+Result -> Final Val Accuracy: 0.9054
+
+--- Trial 02/35 | Layers: 3 | LR: 0.001 | Drop: 0.3 | Ker: 3 | Batch: 32 | Dense: 256 ---
+Result -> Final Val Accuracy: 0.9113
+
+--- Trial 03/35 | Layers: 3 | LR: 0.001 | Drop: 0.4 | Ker: 5 | Batch: 32 | Dense: 256 ---
+Result -> Final Val Accuracy: 0.9193
+
+--- Trial 04/35 | Layers: 3 | LR: 0.005 | Drop: 0.4 | Ker: 3 | Batch: 32 | Dense: 256 ---
+Result -> Final Val Accuracy: 0.8978
+
+--- Trial 05/35 | Layers: 3 | LR: 0.0001 | Drop: 0.3 | Ker: 3 | Batch: 32 | Dense: 128 ---
+Result -> Final Val Accuracy: 0.9155
+
+--- Trial 06/35 | Layers: 3 | LR: 0.0001 | Drop: 0.5 | Ker: 3 | Batch: 32 | Dense: 128 ---
+Result -> Final Val Accuracy: 0.9171
+
+--- Trial 07/35 | Layers: 2 | LR: 0.005 | Drop: 0.4 | Ker: 3 | Batch: 32 | Dense: 64 ---
+Result -> Final Val Accuracy: 0.9077
+
+--- Trial 08/35 | Layers: 2 | LR: 0.0005 | Drop: 0.5 | Ker: 3 | Batch: 32 | Dense: 64 ---
+Result -> Final Val Accuracy: 0.8998
+
+--- Trial 09/35 | Layers: 2 | LR: 0.0005 | Drop: 0.6 | Ker: 3 | Batch: 64 | Dense: 64 ---
+Result -> Final Val Accuracy: 0.9071
+
+--- Trial 10/35 | Layers: 3 | LR: 0.0005 | Drop: 0.5 | Ker: 5 | Batch: 32 | Dense: 256 ---
+Result -> Final Val Accuracy: 0.9197
+
+--- Trial 11/35 | Layers: 2 | LR: 0.0001 | Drop: 0.7 | Ker: 5 | Batch: 64 | Dense: 64 ---
+Result -> Final Val Accuracy: 0.8850
+
+--- Trial 12/35 | Layers: 3 | LR: 0.0005 | Drop: 0.5 | Ker: 5 | Batch: 32 | Dense: 256 ---
+Result -> Final Val Accuracy: 0.9136
+
+--- Trial 13/35 | Layers: 2 | LR: 0.0005 | Drop: 0.3 | Ker: 5 | Batch: 32 | Dense: 128 ---
+Result -> Final Val Accuracy: 0.9137
+
+--- Trial 14/35 | Layers: 2 | LR: 0.0001 | Drop: 0.6 | Ker: 3 | Batch: 128 | Dense: 256 ---
+Result -> Final Val Accuracy: 0.8950
+
+--- Trial 15/35 | Layers: 2 | LR: 0.001 | Drop: 0.6 | Ker: 3 | Batch: 32 | Dense: 64 ---
+Result -> Final Val Accuracy: 0.9126
+
+--- Trial 16/35 | Layers: 2 | LR: 0.0005 | Drop: 0.3 | Ker: 5 | Batch: 64 | Dense: 256 ---
+Result -> Final Val Accuracy: 0.9138
+
+--- Trial 17/35 | Layers: 3 | LR: 0.0005 | Drop: 0.3 | Ker: 5 | Batch: 128 | Dense: 64 ---
+Result -> Final Val Accuracy: 0.9140
+
+--- Trial 18/35 | Layers: 3 | LR: 0.005 | Drop: 0.5 | Ker: 5 | Batch: 32 | Dense: 256 ---
+Result -> Final Val Accuracy: 0.8974
+
+--- Trial 19/35 | Layers: 2 | LR: 0.001 | Drop: 0.4 | Ker: 3 | Batch: 128 | Dense: 64 ---
+Result -> Final Val Accuracy: 0.9078
+
+--- Trial 20/35 | Layers: 3 | LR: 0.001 | Drop: 0.3 | Ker: 5 | Batch: 64 | Dense: 128 ---
+Result -> Final Val Accuracy: 0.9126
+
+--- Trial 21/35 | Layers: 2 | LR: 0.001 | Drop: 0.5 | Ker: 3 | Batch: 128 | Dense: 128 ---
+Result -> Final Val Accuracy: 0.9131
+
+--- Trial 22/35 | Layers: 3 | LR: 0.0005 | Drop: 0.4 | Ker: 3 | Batch: 32 | Dense: 128 ---
+Result -> Final Val Accuracy: 0.9244
+
+--- Trial 23/35 | Layers: 2 | LR: 0.0001 | Drop: 0.5 | Ker: 5 | Batch: 128 | Dense: 64 ---
+Result -> Final Val Accuracy: 0.8873
+
+--- Trial 24/35 | Layers: 3 | LR: 0.005 | Drop: 0.5 | Ker: 3 | Batch: 32 | Dense: 64 ---
+Result -> Final Val Accuracy: 0.9109
+
+--- Trial 25/35 | Layers: 2 | LR: 0.0001 | Drop: 0.7 | Ker: 5 | Batch: 32 | Dense: 64 ---
+Result -> Final Val Accuracy: 0.8902
+
+--- Trial 26/35 | Layers: 3 | LR: 0.0005 | Drop: 0.3 | Ker: 5 | Batch: 128 | Dense: 64 ---
+Result -> Final Val Accuracy: 0.9200
+
+--- Trial 27/35 | Layers: 3 | LR: 0.005 | Drop: 0.7 | Ker: 3 | Batch: 64 | Dense: 64 ---
+Result -> Final Val Accuracy: 0.9115
+
+--- Trial 28/35 | Layers: 3 | LR: 0.0001 | Drop: 0.4 | Ker: 5 | Batch: 128 | Dense: 64 ---
+Result -> Final Val Accuracy: 0.9073
+
+--- Trial 29/35 | Layers: 3 | LR: 0.0001 | Drop: 0.7 | Ker: 5 | Batch: 32 | Dense: 64 ---
+Result -> Final Val Accuracy: 0.9082
+
+--- Trial 30/35 | Layers: 2 | LR: 0.001 | Drop: 0.3 | Ker: 3 | Batch: 64 | Dense: 256 ---
+Result -> Final Val Accuracy: 0.9210
+
+--- Trial 31/35 | Layers: 3 | LR: 0.0005 | Drop: 0.7 | Ker: 5 | Batch: 128 | Dense: 64 ---
+Result -> Final Val Accuracy: 0.9107
+
+--- Trial 32/35 | Layers: 3 | LR: 0.0001 | Drop: 0.7 | Ker: 5 | Batch: 128 | Dense: 256 ---
+Result -> Final Val Accuracy: 0.9024
+
+--- Trial 33/35 | Layers: 2 | LR: 0.005 | Drop: 0.4 | Ker: 5 | Batch: 32 | Dense: 128 ---
+Result -> Final Val Accuracy: 0.9042
+
+--- Trial 34/35 | Layers: 2 | LR: 0.0001 | Drop: 0.7 | Ker: 5 | Batch: 128 | Dense: 256 ---
+Result -> Final Val Accuracy: 0.8861
+
+--- Trial 35/35 | Layers: 3 | LR: 0.005 | Drop: 0.3 | Ker: 3 | Batch: 64 | Dense: 256 ---
+Result -> Final Val Accuracy: 0.9185
+
+======================================
+🥇 RANDOM SEARCH COMPLETE! Best Accuracy: 0.9244
+🥇 Best Parameters: {'num_layers': 3, 'lr': 0.0005, 'dropout': 0.4, 'weight_decay': 1e-05, 'kernel_size': 3, 'padding': 1, 'batch_size': 32, 'dense_units': 128}
+======================================
+
+*** TRAINING FINAL WINNING MODEL (3 LAYERS) FOR 30 EPOCHS ***
+Final Model Epoch 01/30 (51.7s) | Train Acc: 0.8354 | Val Acc: 0.8811
+Final Model Epoch 02/30 (51.8s) | Train Acc: 0.8786 | Val Acc: 0.8994
+Final Model Epoch 03/30 (51.6s) | Train Acc: 0.8922 | Val Acc: 0.9093
+Final Model Epoch 04/30 (51.6s) | Train Acc: 0.8997 | Val Acc: 0.9094
+Final Model Epoch 05/30 (51.6s) | Train Acc: 0.9048 | Val Acc: 0.9132
+Final Model Epoch 06/30 (51.4s) | Train Acc: 0.9120 | Val Acc: 0.9188
+Final Model Epoch 07/30 (51.4s) | Train Acc: 0.9156 | Val Acc: 0.9198
+Final Model Epoch 08/30 (51.4s) | Train Acc: 0.9177 | Val Acc: 0.9208
+Final Model Epoch 09/30 (51.4s) | Train Acc: 0.9207 | Val Acc: 0.9204
+Final Model Epoch 10/30 (51.5s) | Train Acc: 0.9236 | Val Acc: 0.9224
+Final Model Epoch 11/30 (51.4s) | Train Acc: 0.9253 | Val Acc: 0.9223
+Final Model Epoch 12/30 (51.5s) | Train Acc: 0.9280 | Val Acc: 0.9243
+Final Model Epoch 13/30 (51.3s) | Train Acc: 0.9295 | Val Acc: 0.9265
+Final Model Epoch 14/30 (51.3s) | Train Acc: 0.9305 | Val Acc: 0.9283
+Final Model Epoch 15/30 (51.3s) | Train Acc: 0.9346 | Val Acc: 0.9250
+Final Model Epoch 16/30 (51.4s) | Train Acc: 0.9366 | Val Acc: 0.9278
+Final Model Epoch 17/30 (51.3s) | Train Acc: 0.9374 | Val Acc: 0.9276
+Final Model Epoch 18/30 (51.4s) | Train Acc: 0.9395 | Val Acc: 0.9297
+Final Model Epoch 19/30 (51.3s) | Train Acc: 0.9462 | Val Acc: 0.9331
+Final Model Epoch 20/30 (51.3s) | Train Acc: 0.9480 | Val Acc: 0.9342
+Final Model Epoch 21/30 (51.3s) | Train Acc: 0.9493 | Val Acc: 0.9342
+Final Model Epoch 22/30 (51.2s) | Train Acc: 0.9488 | Val Acc: 0.9348
+Final Model Epoch 23/30 (51.3s) | Train Acc: 0.9521 | Val Acc: 0.9345
+Final Model Epoch 24/30 (51.3s) | Train Acc: 0.9527 | Val Acc: 0.9347
+Final Model Epoch 25/30 (51.3s) | Train Acc: 0.9536 | Val Acc: 0.9364
+Final Model Epoch 26/30 (51.3s) | Train Acc: 0.9542 | Val Acc: 0.9334
+Final Model Epoch 27/30 (51.3s) | Train Acc: 0.9544 | Val Acc: 0.9341
+Final Model Epoch 28/30 (51.4s) | Train Acc: 0.9549 | Val Acc: 0.9346
+Final Model Epoch 29/30 (51.3s) | Train Acc: 0.9592 | Val Acc: 0.9363
+Final Model Epoch 30/30 (51.4s) | Train Acc: 0.9607 | Val Acc: 0.9385
+
+***CLASSIFICATION REPORT***
+Final Test Loss: 0.2059, Final Test Acc: 0.9335
+
+======================================
+     FINAL TEST SET EVALUATION        
+======================================
+              precision    recall  f1-score   support
+
+ T-shirt/top       0.88      0.89      0.88      1000
+     Trouser       1.00      0.99      0.99      1000
+    Pullover       0.90      0.91      0.90      1000
+       Dress       0.94      0.94      0.94      1000
+        Coat       0.90      0.91      0.90      1000
+      Sandal       0.99      0.99      0.99      1000
+       Shirt       0.81      0.78      0.80      1000
+     Sneaker       0.97      0.97      0.97      1000
+         Bag       0.99      0.99      0.99      1000
+  Ankle boot       0.97      0.97      0.97      1000
+
+    accuracy                           0.93     10000
+   macro avg       0.93      0.93      0.93     10000
+weighted avg       0.93      0.93      0.93     10000
+
+
+Generating Confusion Matrix...

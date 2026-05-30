@@ -1,29 +1,29 @@
 === BEST HYPERPARAMETERS ===
 num_layers: 3
 lr: 0.0005
-dropout: 0.6
-weight_decay: 0.0
-kernel_size: 5
-padding: 2
-batch_size: 64
-dense_units: 256
+dropout: 0.4
+weight_decay: 1e-05
+kernel_size: 3
+padding: 1
+batch_size: 32
+dense_units: 128
 
-Final Test Loss: 0.2063
-Final Test Accuracy: 0.9291
+Final Test Loss: 0.2059
+Final Test Accuracy: 0.9335
 
 === CLASSIFICATION REPORT ===
               precision    recall  f1-score   support
 
- T-shirt/top       0.88      0.88      0.88      1000
-     Trouser       0.99      0.99      0.99      1000
-    Pullover       0.86      0.92      0.89      1000
-       Dress       0.94      0.93      0.94      1000
-        Coat       0.90      0.88      0.89      1000
+ T-shirt/top       0.88      0.89      0.88      1000
+     Trouser       1.00      0.99      0.99      1000
+    Pullover       0.90      0.91      0.90      1000
+       Dress       0.94      0.94      0.94      1000
+        Coat       0.90      0.91      0.90      1000
       Sandal       0.99      0.99      0.99      1000
-       Shirt       0.80      0.77      0.79      1000
+       Shirt       0.81      0.78      0.80      1000
      Sneaker       0.97      0.97      0.97      1000
          Bag       0.99      0.99      0.99      1000
-  Ankle boot       0.97      0.98      0.97      1000
+  Ankle boot       0.97      0.97      0.97      1000
 
     accuracy                           0.93     10000
    macro avg       0.93      0.93      0.93     10000
