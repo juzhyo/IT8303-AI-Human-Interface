@@ -563,10 +563,8 @@ for trial in range(num_random_trials):
             'batch_size': b_size, 'dense_units': d_units
         }
 
-print("======================================")
-print(f"🥇 RANDOM SEARCH COMPLETE! Best Accuracy: {best_val_acc:.4f}")
-print(f"🥇 Best Parameters: {best_params}")
-print("======================================")
+print(f"Best Accuracy: {best_val_acc:.4f}")
+print(f"Best Parameters: {best_params}")
 
 # 6. Rebuild the WINNING model architecture dynamically
 final_layers = []
@@ -602,7 +600,7 @@ final_val_loader = DataLoader(val_data, batch_size=best_params['batch_size'], sh
 final_test_loader = DataLoader(test_data, batch_size=best_params['batch_size'], shuffle=False)
 
 # 7. Train the winning model for a FULL run to reach maximum potential
-print(f"\n*** TRAINING FINAL WINNING MODEL ({best_params['num_layers']} LAYERS) FOR 30 EPOCHS ***")
+print(f"\n***TRAINING FINAL MODEL FOR 30 EPOCHS***")
 final_optimizer = torch.optim.Adam(final_tuned_model.parameters(), lr=best_params['lr'], weight_decay=best_params['weight_decay'])
 final_scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(final_optimizer, mode='min', factor=0.5, patience=2)
 
@@ -638,7 +636,11 @@ for epoch in range(final_epochs):
         final_val_acc_hist.append(v_acc / len(final_val_loader))
         
     final_scheduler.step(final_val_loss_hist[-1])
-    print(f"Final Model Epoch {epoch+1:02d}/{final_epochs} ({time.time() - start_time:.1f}s) | Train Acc: {final_train_acc_hist[-1]:.4f} | Val Acc: {final_val_acc_hist[-1]:.4f}")
+    # print(f"Final Model Epoch {epoch+1:02d}/{final_epochs} ({time.time() - start_time:.1f}s) | Train Acc: {final_train_acc_hist[-1]:.4f} | Val Acc: {final_val_acc_hist[-1]:.4f}")
+
+    print(f"Epoch {epoch+1} done in {time.time - start_time:.2f} seconds. "
+          f"Train Loss: {final_train_loss_hist[-1]:.4f}, Train Acc: {final_train_acc_hist[-1]:.4f}, "
+          f"Val Loss: {final_val_loss_hist[-1]:.4f}, Val Acc: {final_val_acc_hist[-1]:.4f}")
 
 # 8. Plot the Final Winning Model's Learning Curves
 plt.figure(figsize=(6, 8))

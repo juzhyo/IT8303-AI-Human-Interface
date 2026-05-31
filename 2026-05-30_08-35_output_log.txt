@@ -168,10 +168,10 @@ Result -> Final Val Accuracy: 0.8860
 --- Trial 30/30 | Layers: 2 | LR: 0.005 | Drop: 0.5 | Ker: 5 | Batch: 128 | Dense: 256 ---
 Result -> Final Val Accuracy: 0.9067
 
-======================================
-🥇 RANDOM SEARCH COMPLETE! Best Accuracy: 0.9190
-🥇 Best Parameters: {'num_layers': 3, 'lr': 0.0005, 'dropout': 0.6, 'weight_decay': 0.0, 'kernel_size': 5, 'padding': 2, 'batch_size': 64, 'dense_units': 256}
-======================================
+
+Best Accuracy: 0.9190
+Best Parameters: {'num_layers': 3, 'lr': 0.0005, 'dropout': 0.6, 'weight_decay': 0.0, 'kernel_size': 5, 'padding': 2, 'batch_size': 64, 'dense_units': 256}
+
 
 *** TRAINING FINAL WINNING MODEL (3 LAYERS) FOR 30 EPOCHS ***
 Final Model Epoch 01/30 (55.1s) | Train Acc: 0.8233 | Val Acc: 0.8736
