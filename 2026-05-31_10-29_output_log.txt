@@ -1,0 +1,17 @@
+Calculated Mean: 0.2860
+Calculated Std Dev: 0.3530
+
+***NUMBER OF DATASET IMAGES***
+Training:   48000
+Validation: 12000
+Test:       10000
+Total:      70000
+
+***IMPLEMENT BASELINE CNN MODEL***
+Epoch 1 done in 19.04 seconds. Train Loss: 0.4207, Train Acc: 0.8480, Val Loss: 0.3654, Val Acc: 0.8684
+Epoch 2 done in 18.91 seconds. Train Loss: 0.2925, Train Acc: 0.8936, Val Loss: 0.2836, Val Acc: 0.9003
+Epoch 3 done in 18.76 seconds. Train Loss: 0.2525, Train Acc: 0.9046, Val Loss: 0.2550, Val Acc: 0.9102
+Epoch 4 done in 18.73 seconds. Train Loss: 0.2190, Train Acc: 0.9179, Val Loss: 0.2466, Val Acc: 0.9143
+Epoch 5 done in 18.75 seconds. Train Loss: 0.1963, Train Acc: 0.9260, Val Loss: 0.2634, Val Acc: 0.9081
+Epoch 6 done in 18.64 seconds. Train Loss: 0.1762, Train Acc: 0.9335, Val Loss: 0.2707, Val Acc: 0.9040
+Epoch 7 done in 18.50 seconds. Train Loss: 0.1572, Train Acc: 0.9393, Val Loss: 0.2740, Val Acc: 0.9077
