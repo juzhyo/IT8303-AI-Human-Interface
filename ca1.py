@@ -620,7 +620,9 @@ for epoch in range(final_epochs):
         final_optimizer.step()
         t_loss += loss.item()
         t_acc += get_accuracy(output, labels)
-        
+
+    end_time = time.time()
+ 
     final_train_loss_hist.append(t_loss / len(final_train_loader))
     final_train_acc_hist.append(t_acc / len(final_train_loader))
 
@@ -638,7 +640,7 @@ for epoch in range(final_epochs):
     final_scheduler.step(final_val_loss_hist[-1])
     # print(f"Final Model Epoch {epoch+1:02d}/{final_epochs} ({time.time() - start_time:.1f}s) | Train Acc: {final_train_acc_hist[-1]:.4f} | Val Acc: {final_val_acc_hist[-1]:.4f}")
 
-    print(f"Epoch {epoch+1} done in {time.time - start_time:.2f} seconds. "
+    print(f"Epoch {epoch+1} done in {end_time - start_time:.2f} seconds. "
           f"Train Loss: {final_train_loss_hist[-1]:.4f}, Train Acc: {final_train_acc_hist[-1]:.4f}, "
           f"Val Loss: {final_val_loss_hist[-1]:.4f}, Val Acc: {final_val_acc_hist[-1]:.4f}")
 
